@@ -2,43 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Onest Font Family */
+/* Ginto Font Family */
 @font-face {
-    font-family: "Onest";
-    src: url("/assets/font/static/Onest-Light.ttf") format("truetype");
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Onest";
-    src: url("/assets/font/static/Onest-Regular.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Onest";
-    src: url("/assets/font/static/Onest-Medium.ttf") format("truetype");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Onest";
-    src: url("/assets/font/static/Onest-SemiBold.ttf") format("truetype");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Onest";
-    src: url("/assets/font/static/Onest-Bold.ttf") format("truetype");
-    font-weight: 700;
+    font-family: "Ginto";
+    src: url("/assets/font/Ginto-Copilot-Upright-Variable.woff2")
+        format("woff2");
+    font-weight: 300 700;
     font-style: normal;
     font-display: swap;
 }
@@ -48,7 +17,7 @@ html {
 }
 
 body {
-    font-family: "Onest", sans-serif;
+    font-family: "Ginto", sans-serif;
     line-height: 1.6;
     color: #1e293b;
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);

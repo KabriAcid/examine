@@ -12,8 +12,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Onest", "system-ui", "sans-serif"],
-                onest: ["Onest", "system-ui", "sans-serif"],
+                sans: ["Ginto", "system-ui", "sans-serif"],
                 ginto: ["Ginto", "system-ui", "sans-serif"],
                 arabic: ["Amiri", "serif"],
                 inter: ["Inter", "system-ui", "sans-serif"],

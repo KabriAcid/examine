@@ -75,38 +75,38 @@
 
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-spiritual-900 leading-tight">
                             Master Your
-                            <span class="text-gradient bg-gradient-to-r from-primary-600 to-secondary-600 block">Exam Preparation</span>
+                            <span class="text-gradient block">Exam Preparation</span>
                         </h1>
 
-                        <p class="text-lg text-spiritual-600 leading-relaxed">
+                        <p class="text-lg md:text-xl text-spiritual-600 max-w-3xl leading-relaxed">
                             Ace your JAMB, WAEC, and NECO exams with AI-powered practice tests, compete with peers, and track your academic progress in real-time.
                         </p>
 
                         <!-- CTA Buttons -->
                         <div
-                            x-data="{ show: false }"
-                            x-init="setTimeout(() => show = true, 300)"
-                            x-show="show"
+                            x-data="{ showButtons: false }"
+                            x-init="setTimeout(() => showButtons = true, 300)"
+                            x-show="showButtons"
                             x-transition:enter="transition ease-out duration-800"
-                            x-transition:enter-start="opacity-0 translate-y-5"
+                            x-transition:enter-start="opacity-0 translate-y-4"
                             x-transition:enter-end="opacity-100 translate-y-0"
                             class="flex flex-col sm:flex-row items-center justify-start space-y-4 sm:space-y-0 sm:space-x-4">
 
                             @auth
-                            <a href="{{ route('dashboard') }}" class="btn-primary group">
+                            <a href="{{ route('dashboard') }}" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-3 px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed group">
                                 <x-lucide-play class="w-5 h-5 mr-2" />
                                 Start Practicing
                                 <x-lucide-arrow-right class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                             </a>
                             @else
-                            <a href="{{ route('register') }}" class="btn-primary group">
+                            <a href="{{ route('register') }}" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-3 px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed group">
                                 <x-lucide-play class="w-5 h-5 mr-2" />
                                 Start Learning
                                 <x-lucide-arrow-right class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                             </a>
                             @endauth
 
-                            <a href="#featured-exams" class="btn-secondary">
+                            <a href="#featured-exams" class="bg-white text-spiritual-700 font-medium py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 border border-spiritual-200 hover:border-spiritual-300 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spiritual-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <x-lucide-trophy class="w-5 h-5 mr-2" />
                                 View Leaderboard
                             </a>
@@ -116,7 +116,7 @@
                     <!-- Hero Illustration -->
                     <div
                         x-data="{ show: false }"
-                        x-init="setTimeout(() => show = true, 500)"
+                        x-init="setTimeout(() => show = true, 600)"
                         x-show="show"
                         x-transition:enter="transition ease-out duration-1000"
                         x-transition:enter-start="opacity-0 scale-80"
@@ -132,7 +132,7 @@
                                     <h3 class="text-xl font-bold text-spiritual-900">Ready to Begin?</h3>
                                     <p class="text-spiritual-600">Choose from thousands of exam questions across all subjects</p>
                                     <div class="flex items-center justify-center space-x-2 text-sm text-spiritual-500">
-                                        <x-lucide-star class="w-4 h-4 text-warning-500 fill-current" />
+                                        <x-lucide-star class="w-4 h-4 text-warning-500" />
                                         <span>Trusted by 10,000+ students</span>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@
                         x-transition:enter="transition ease-out duration-600"
                         x-transition:enter-start="opacity-0 translate-y-5"
                         x-transition:enter-end="opacity-100 translate-y-0"
-                        style="{{ 'transition-delay: '.($index * 100).'ms' }}"
+                        :style="'transition-delay: {{ $index * 100 }}ms;'"
                         class="text-center space-y-2">
 
                         <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center {{ $stat['color'] }}">
@@ -196,7 +196,7 @@
                             <x-lucide-book-open class="w-6 h-6" />
                             @elseif($stat['icon'] === 'badge-check')
                             <x-lucide-badge-check class="w-6 h-6" />
-                            @else
+                            @elseif($stat['icon'] === 'star')
                             <x-lucide-star class="w-6 h-6" />
                             @endif
                         </div>
@@ -210,7 +210,7 @@
         </section>
 
         <!-- Featured Exams Section -->
-        <section id="featured-exams" class="py-16 bg-spiritual-50">
+        <section id="featured-exams" class="py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div
@@ -271,7 +271,7 @@
                 ];
                 @endphp
 
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($featuredExams as $index => $exam)
                     <div
                         x-data="{ show: false }"
@@ -280,57 +280,49 @@
                         x-transition:enter="transition ease-out duration-600"
                         x-transition:enter-start="opacity-0 translate-y-5"
                         x-transition:enter-end="opacity-100 translate-y-0"
-                        style="{{ 'transition-delay: '.($index * 100).'ms' }}"
-                        class="quiz-card group">
+                        :style="'transition-delay: {{ $index * 100 }}ms;'"
+                        class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-white/20 card-hover">
 
-                        <div class="space-y-4">
-                            <!-- Exam Header -->
-                            <div class="flex items-start justify-between">
-                                <div class="text-4xl">{{ $exam['emoji'] }}</div>
-                                <span class="px-3 py-1 rounded-full text-xs font-medium {{ $exam['difficultyColor'] }}">
-                                    {{ ucfirst($exam['difficulty']) }}
-                                </span>
+                        <!-- Card Header -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="text-4xl">{{ $exam['emoji'] }}</div>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium {{ $exam['difficultyColor'] }}">
+                                {{ ucfirst($exam['difficulty']) }}
+                            </span>
+                        </div>
+
+                        <!-- Card Content -->
+                        <h3 class="text-xl font-bold text-spiritual-900 mb-2">{{ $exam['title'] }}</h3>
+                        <p class="text-spiritual-600 text-sm mb-4 leading-relaxed">{{ $exam['description'] }}</p>
+
+                        <!-- Card Meta -->
+                        <div class="flex items-center space-x-4 text-sm text-spiritual-500 mb-4">
+                            <div class="flex items-center space-x-1">
+                                <x-lucide-clock class="w-4 h-4" />
+                                <span>{{ $exam['timeLimit'] }}m</span>
                             </div>
-
-                            <!-- Exam Title & Description -->
-                            <div>
-                                <h3 class="text-xl font-bold text-spiritual-900 mb-2">{{ $exam['title'] }}</h3>
-                                <p class="text-sm text-spiritual-600">{{ $exam['description'] }}</p>
+                            <div class="flex items-center space-x-1">
+                                <x-lucide-star class="w-4 h-4" />
+                                <span>{{ $exam['totalPoints'] }} pts</span>
                             </div>
-
-                            <!-- Exam Meta -->
-                            <div class="flex items-center justify-between text-sm text-spiritual-500">
-                                <div class="flex items-center space-x-4">
-                                    <div class="flex items-center space-x-1">
-                                        <x-lucide-clock class="w-4 h-4" />
-                                        <span>{{ $exam['timeLimit'] }}m</span>
-                                    </div>
-                                    <div class="flex items-center space-x-1">
-                                        <x-lucide-star class="w-4 h-4" />
-                                        <span>{{ $exam['totalPoints'] }} pts</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center space-x-1 text-sm text-spiritual-500">
+                            <div class="flex items-center space-x-1">
                                 <x-lucide-users class="w-4 h-4" />
-                                <span>{{ $exam['questions'] }} questions</span>
+                                <span>{{ $exam['questions'] }}</span>
                             </div>
                         </div>
 
-                        <!-- Start Exam Button -->
+                        <!-- Start Button -->
                         @auth
-                        <a href="{{ route('dashboard') }}" class="btn-primary w-full group">
+                        <a href="{{ route('dashboard') }}" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-3 px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed w-full group">
                             <span>Start Exam</span>
                             <x-lucide-arrow-right class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </a>
                         @else
-                        <a href="{{ route('register') }}" class="btn-primary w-full group">
+                        <a href="{{ route('register') }}" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-3 px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed w-full group">
                             <span>Start Exam</span>
                             <x-lucide-arrow-right class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </a>
                         @endauth
-
                     </div>
                     @endforeach
                 </div>
@@ -345,7 +337,7 @@
                     x-transition:enter-end="opacity-100"
                     class="text-center mt-12">
 
-                    <a href="{{ route('login') }}" class="btn-secondary inline-flex items-center">
+                    <a href="{{ route('login') }}" class="bg-white text-spiritual-700 font-medium py-3 px-6 rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 border border-spiritual-200 hover:border-spiritual-300 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-spiritual-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span>View All Exams</span>
                         <x-lucide-arrow-right class="w-5 h-5 ml-2" />
                     </a>
@@ -355,14 +347,8 @@
         </section>
 
         <!-- CTA Section -->
-        <section class="py-16 bg-gradient-to-br from-primary-600 via-secondary-600 to-primary-700 relative overflow-hidden">
-            <!-- Background decorative elements -->
-            <div class="absolute inset-0 opacity-10">
-                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-                <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
-            </div>
-
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <section class="py-16 bg-gradient-to-r from-primary-600 to-secondary-600">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                 <div
                     x-data="{ show: false }"
                     x-intersect="show = true"
@@ -381,12 +367,12 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 bg-white text-primary-600 hover:bg-primary-50 shadow-medium hover:shadow-strong hover:scale-105 active:scale-95 px-6 py-3">
+                        <a href="{{ route('register') }}" class="bg-white text-primary-600 hover:bg-primary-50 font-medium py-3 px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50">
                             <x-lucide-play class="w-5 h-5 mr-2" />
                             Start Your First Test
                         </a>
 
-                        <a href="#featured-exams" class="inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 text-white border-2 border-white hover:bg-white/10 px-6 py-3">
+                        <a href="#featured-exams" class="text-white font-medium py-3 px-6 rounded-xl hover:bg-white/50 transition-all duration-300 border-2 border-white hover:bg-white/10 inline-flex items-center justify-center">
                             Learn More
                         </a>
                     </div>
