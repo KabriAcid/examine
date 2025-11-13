@@ -5,11 +5,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('/terms', function () {
     return view('terms');
 })->name('terms');
+
+Route::get('/mock/{examId?}', App\Livewire\MockExam::class)->name('mock.exam');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
