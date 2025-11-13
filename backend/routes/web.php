@@ -13,8 +13,21 @@ Route::get('/terms', function () {
 
 Route::get('/mock/{examId?}', App\Livewire\MockExam::class)->name('mock.exam');
 
+// Student Routes (Protected)
+Route::middleware(['auth', 'verified'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', App\Livewire\Student\Dashboard::class)->name('dashboard');
+    Route::get('/exams', fn() => view('livewire.student.exams'))->name('exams');
+    Route::get('/practice', fn() => view('livewire.student.practice'))->name('practice');
+    Route::get('/results', fn() => view('livewire.student.results'))->name('results');
+    Route::get('/performance', fn() => view('livewire.student.performance'))->name('performance');
+    Route::get('/subjects', fn() => view('livewire.student.subjects'))->name('subjects');
+    Route::get('/settings', fn() => view('livewire.student.settings'))->name('settings');
+    Route::get('/help', fn() => view('livewire.student.help'))->name('help');
+});
+
+// Old dashboard route for compatibility
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('student.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
