@@ -1,234 +1,59 @@
-## 🧭 Complete Development Guide for AI-Powered JAMB/WAEC Mock CBT System
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-### 🎯 Project Overview
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-This project aims to build a **multi-school web-based CBT platform** that simulates JAMB and WAEC-style exams for students to practice. Each school can register, add students, and manage exams. The system will feature **AI-generated questions** using the **OpenAI GPT-4.1 API**, and provide smooth exam interactions similar to Exambly or JAMB’s official platform.
+## About Laravel
 
-The project will be built with **Laravel 11**, **Livewire 3**, **Alpine.js**, **Tailwind CSS**, **Lucide React Icons**, and **Framer Motion (via JS)** for animations. The database will be **MySQL** (InnoDB engine) hosted on **shared hosting**.
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
----
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-### 🧱 Project Structure Overview
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-```
-app/
-├── Http/
-│   ├── Controllers/
-│   ├── Livewire/
-│   ├── Middleware/
-│   └── Requests/
-├── Models/
-├── Services/AI/          # GPT integration and prompt handlers
-├── Helpers/              # Utility and helper functions
-└── Providers/
-resources/
-├── views/                # Blade + Livewire views
-│   ├── layouts/
-│   ├── student/
-│   └── admin/
-├── css/
-└── js/
-public/
-└── uploads/
-```
+## Learning Laravel
 
----
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
 
-### ⚙️ Core Functional Modules
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-#### 1. **School Module**
+## Laravel Sponsors
 
-* Each school registers via a dedicated portal.
-* After registration, a subdomain or unique identifier (school_code) is created.
-* Schools can upload students using CSV templates.
-* Each school has its own admins (staff users).
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-#### 2. **Student Module**
+### Premium Partners
 
-* Students log in using their unique ID and password.
-* Can view dashboard, available exams, and results.
-* Data stored per school to prevent cross-access.
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
-#### 3. **Exam Module**
+## Contributing
 
-* Admins create exams with:
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-  * Title (e.g., WAEC Mock 2025)
-  * Duration (2 hours total / 30 mins per subject)
-  * 4 subjects per student.
-  * Questions assigned per subject.
-* Exam attempts are tracked and auto-submitted on timeout.
+## Code of Conduct
 
-#### 4. **AI Question Generation Module (GPT-4.1)**
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-AI is used to generate new question sets dynamically. Admins can specify:
+## Security Vulnerabilities
 
-* Subject name
-* Topic/subtopic
-* Difficulty level (basic/intermediate/advanced)
-* Number of questions
-* Option type (A–D or A–E/F)
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-##### Example GPT Prompt:
+## License
 
-```
-Generate 10 multiple-choice questions for the subject "Physics" under the topic "Waves and Vibrations" suitable for WAEC/JAMB level.
-Each question should have the following structure:
-
-{
-  "question": "<Question text>",
-  "options": {
-    "A": "<Option 1>",
-    "B": "<Option 2>",
-    "C": "<Option 3>",
-    "D": "<Option 4>"
-  },
-  "correct_answer": "A/B/C/D",
-  "explanation": "<Short explanation>"
-}
-
-Make sure questions are accurate, contextually relevant, and follow the Nigerian WAEC/JAMB format.
-```
-
-##### Extended Prompt for Five Options (A–E):
-
-```
-Generate 10 multiple-choice questions for the subject "Biology" under the topic "Genetics" suitable for JAMB level.
-Each question should have FIVE options labeled A to E. Follow this JSON structure:
-{
-  "question": "<Question text>",
-  "options": {
-    "A": "<Option A>",
-    "B": "<Option B>",
-    "C": "<Option C>",
-    "D": "<Option D>",
-  },
-  "correct_answer": "A/B/C/D/",
-  "explanation": "<Reasoning behind the answer>"
-}
-```
-
-#### 5. **Question Management**
-
-* Questions can be **generated (AI)** or **uploaded via CSV**.
-* CSV format:
-  `subject, question, optionA, optionB, optionC, optionD, correctAnswer, explanation`
-* Each question is linked to a specific school and subject.
-
-#### 6. **Exam Interface (Student View)**
-
-* Full-screen environment with:
-
-  * Header: Exam name, Subject tabs, Countdown timer
-  * Left panel: Question text + options (A–D)
-  * Right panel: Question numbers grid
-* Real-time behaviors:
-
-  * Auto-save selected answers to DB
-  * Auto-submit on timeout
-  * LocalStorage backup to prevent data loss
-  * Smooth navigation (next/prev/subject switch)
-  * Color hierarchy for question states:
-
-    * **Answered** → Purple
-    * **Unanswered** → Gray
-    * **Current** → Purple border
-    * **Flagged** → Orange
-
-#### 7. **Timer & Auto-Save Mechanism**
-
-* Global 2-hour timer per exam.
-* 30-minute sub-timer per subject.
-* Auto-save progress every 10 seconds (via Livewire polling).
-* Auto-submit when timer expires.
-
-#### 8. **Results & Analytics**
-
-* Result summary page:
-
-  * Total score & percentage
-  * Subject-wise performance breakdown
-  * Correct vs Incorrect visualization (charts)
-  * Answer review (with correct answers highlighted)
-
-#### 9. **Subscription & Billing**
-
-* Schools pay based on number of students (tiers e.g., 50, 200, 500, etc.)
-* Integrate Paystack/Flutterwave for subscription billing.
-* Subscription expiry disables student login.
-
-#### 10. **System Management**
-
-* Super Admin panel for global control.
-* Features:
-
-  * Manage schools, subscriptions, payments
-  * Monitor active exams & logs
-  * Generate usage reports
-
----
-
-### 🧠 Data Flow Summary
-
-1. Admin creates exam → selects AI generation or uploads questions.
-2. Students log in → start exam → all questions preloaded.
-3. As students answer, Livewire updates the DB asynchronously.
-4. On submit or timeout → system computes result → saves & displays summary.
-5. Admin reviews analytics via dashboard.
-
----
-
-### 🔐 Key Functionalities to Implement
-
-* Protected routes with roles (super admin, school admin, student)
-* Prevent page refresh or navigation during exams
-* Session restore from localStorage if browser closes
-* Responsive design for tablets/laptops
-* Global state via Livewire store
-* Toast notifications (success/error/info)
-
----
-
-### 📊 Recommended Database Tables (MySQL)
-
-* `users` → stores all users (role-based)
-* `schools` → registered institutions
-* `students` → student data linked to school
-* `subjects` → subject list
-* `questions` → question pool (AI or uploaded)
-* `exams` → exams created per school
-* `exam_questions` → question mapping for each exam
-* `exam_attempts` → tracks each student’s session
-* `student_answers` → stores answers during exams
-* `subscriptions` → billing & plan tracking
-* `ai_prompts` → stores prompt templates and logs
-
----
-
-### 🧩 Future Enhancements
-
-* AI-based performance feedback (identify weak areas)
-* AI question difficulty balancing
-* Real-time leaderboard for schools
-* Offline support via PWA (optional)
-
----
-
-### 🚀 Development Workflow Summary
-
-1. Setup Laravel + Livewire base.
-2. Create database schema.
-3. Build authentication & school registration.
-4. Implement student dashboard & exam modules.
-5. Integrate GPT-4.1 API for question generation.
-6. Add Livewire exam interface + auto-save logic.
-7. Integrate payments & subscription management.
-8. Deploy to shared hosting.
-
----
-
-### ✅ Goal
-
-Deliver a **scalable, AI-enhanced CBT platform** that simulates real exam conditions while being easily adoptable by multiple schools without complex multi-tenancy. The use of **MySQL**, **Livewire**, and **GPT-4.1** ensures simplicity, interactivity, and modern functionality.
-
-
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
