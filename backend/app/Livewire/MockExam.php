@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class MockExam extends Component
 {
     // Quiz State
@@ -20,6 +21,15 @@ class MockExam extends Component
     // UI State
     public $selectedAnswer = '';
     public $showConfirmModal = false;
+
+    public function updatedSelectedAnswer($value)
+    {
+        // When selectedAnswer changes (for fill-blank inputs), update answers array
+        $currentQuestion = $this->getCurrentQuestion();
+        if ($currentQuestion && $currentQuestion['type'] === 'fill-blank') {
+            $this->answers[$currentQuestion['id']] = $value;
+        }
+    }
 
     public function mount($examId = null)
     {
@@ -231,7 +241,6 @@ class MockExam extends Component
         return $this->selectedAnswer !== '' && $this->selectedAnswer !== null;
     }
 
-    #[Layout('layouts.app')]
     public function render()
     {
         return view('livewire.mock-exam');

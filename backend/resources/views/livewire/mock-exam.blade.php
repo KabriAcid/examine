@@ -1,7 +1,7 @@
 <div>
     @if(!$isCompleted)
     <!-- Quiz In Progress -->
-    <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 pt-20 pb-8"
+    <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-8"
         x-data="{
             timeRemaining: @entangle('timeRemaining'),
             timeWarning: false,
@@ -59,10 +59,9 @@
 
                     <!-- Question Card -->
                     <div wire:key="question-{{ $currentQuestionIndex }}"
-                        x-data="{ show: false }"
-                        x-init="setTimeout(() => show = true, 100)"
+                        x-data="{ show: true }"
                         x-show="show"
-                        x-transition:enter="transition ease-out duration-500"
+                        x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0 translate-x-5"
                         x-transition:enter-end="opacity-100 translate-x-0"
                         class="quiz-card">
@@ -113,8 +112,7 @@
                                 <div>
                                     <input
                                         type="text"
-                                        wire:model.live="selectedAnswer"
-                                        wire:change="answerQuestion($event.target.value)"
+                                        wire:model.blur="selectedAnswer"
                                         placeholder="Type your answer here..."
                                         class="input-field text-lg"
                                         autocomplete="off">
@@ -237,9 +235,12 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div x-data="{ open: @entangle('showConfirmModal') }"
+        @if($showConfirmModal)
+        <div x-data="{ open: true }"
             x-show="open"
-            x-cloak
+            @click.self="$wire.closeConfirmModal()"
+            style="display: none;"
+            x-init="$nextTick(() => { open = true })"
             class="fixed inset-0 z-50 flex items-center justify-center p-4">
 
             <!-- Backdrop -->
@@ -250,7 +251,6 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
-                @click="open = false"
                 class="fixed inset-0 bg-black/50 backdrop-blur-sm"></div>
 
             <!-- Modal -->
@@ -261,7 +261,8 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                 x-transition:leave-end="opacity-0 scale-95 translate-y-5"
-                class="relative w-full max-w-md bg-white rounded-2xl shadow-strong overflow-hidden">
+                @click.stop
+                class="relative w-full max-w-md bg-white rounded-2xl shadow-strong overflow-hidden z-10">
 
                 <div class="flex items-center justify-between p-6 border-b border-spiritual-200">
                     <h3 class="text-lg font-semibold text-spiritual-900">Submit Quiz</h3>
@@ -291,6 +292,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
     @else
