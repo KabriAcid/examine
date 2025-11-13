@@ -1,2 +1,12 @@
 {
+    "require": {
+        "openai-php/laravel": "*",
+        "unicodeveloper/laravel-paystack": "*",
+        "maatwebsite/excel": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
