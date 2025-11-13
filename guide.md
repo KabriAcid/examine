@@ -1,61 +1,196 @@
-# Migration Guide: React + Firebase → Laravel + MySQL + React (Inertia.js)
+# Complete Transformation & Migration Guide: Quran Quiz App → JAMB/WAEC Mock CBT Platform
 
-**Project**: Examine Quiz Application  
+**Project**: Examine - AI-Powered Multi-School CBT System  
 **Date**: November 12, 2025  
-**Goal**: Migrate from React SPA with Firebase backend to Laravel + MySQL backend while preserving all React components, Tailwind design system, JavaScript functionality, and validation logic.
+**Source**: React Quran Quiz App (examine/) with Firebase backend  
+**Target**: Laravel 11 + Livewire 3 + MySQL Multi-School CBT Platform with AI Question Generation
+
+**Goal**: Transform the existing Quran Quiz application into a comprehensive JAMB/WAEC Mock CBT platform while migrating from React + Firebase to Laravel + Livewire + MySQL. This includes both technical migration AND feature transformation to support multi-school management, AI-generated questions, subscription billing, and exam simulation.
 
 ---
 
 ## Table of Contents
+
+### Part A: Understanding the Transformation
+
 1. [Overview & Architecture Decision](#overview--architecture-decision)
-2. [Prerequisites](#prerequisites)
-3. [Phase 0: Preparation & Backup](#phase-0-preparation--backup)
-4. [Phase 1: Install Laravel & Dependencies](#phase-1-install-laravel--dependencies)
-5. [Phase 2: Configure Laravel Environment](#phase-2-configure-laravel-environment)
-6. [Phase 3: Database Schema & Migrations](#phase-3-database-schema--migrations)
-7. [Phase 4: API Routes & Controllers](#phase-4-api-routes--controllers)
-8. [Phase 5: Integrate React + Inertia](#phase-5-integrate-react--inertia)
-9. [Phase 6: Preserve Design System](#phase-6-preserve-design-system)
-10. [Phase 7: Auth Migration](#phase-7-auth-migration)
-11. [Phase 8: Quiz Functionality Migration](#phase-8-quiz-functionality-migration)
-12. [Phase 9: Testing & Validation](#phase-9-testing--validation)
-13. [Phase 10: Deployment Prep](#phase-10-deployment-prep)
-14. [Reference: File Mapping](#reference-file-mapping)
-15. [Reference: API Endpoints](#reference-api-endpoints)
+2. [Feature Comparison: Quran Quiz → JAMB/WAEC CBT](#feature-comparison)
+3. [Prerequisites](#prerequisites)
+
+### Part B: Technical Migration Steps
+
+4. [Phase 0: Preparation & Backup](#phase-0-preparation--backup)
+5. [Phase 1: Install Laravel & Dependencies](#phase-1-install-laravel--dependencies)
+6. [Phase 2: Configure Laravel Environment](#phase-2-configure-laravel-environment)
+7. [Phase 3: Database Schema & Migrations](#phase-3-database-schema--migrations)
+8. [Phase 4: Multi-Tenancy & School System](#phase-4-multi-tenancy--school-system)
+9. [Phase 5: Authentication & Role System](#phase-5-authentication--role-system)
+10. [Phase 6: Livewire Components](#phase-6-livewire-components)
+11. [Phase 7: AI Question Generation (GPT-4)](#phase-7-ai-question-generation)
+12. [Phase 8: Exam Interface & Timer System](#phase-8-exam-interface--timer-system)
+13. [Phase 9: Payment Integration (Paystack/Flutterwave)](#phase-9-payment-integration)
+14. [Phase 10: Preserve Design System (Tailwind)](#phase-10-preserve-design-system)
+15. [Phase 11: Component Conversion (React → Livewire)](#phase-11-component-conversion)
+16. [Phase 12: Testing & Validation](#phase-12-testing--validation)
+17. [Phase 13: Deployment to Shared Hosting](#phase-13-deployment-to-shared-hosting)
+
+### Part C: Reference Materials
+
+18. [Reference: Database Schema](#reference-database-schema)
+19. [Reference: Feature Mapping](#reference-feature-mapping)
+20. [Reference: Reusable Components](#reference-reusable-components)
+21. [Reference: AI Prompts & Templates](#reference-ai-prompts--templates)
 
 ---
 
 ## Overview & Architecture Decision
 
-### Current Stack (examine/ folder)
+### Current Application (examine/ folder)
+
+**Quran Quiz Application Features:**
+
+- Single quiz type (Islamic/Quran knowledge)
+- Firebase authentication (single user type)
+- Simple quiz flow: start → answer → submit → score
+- Firestore for data storage
+- Single leaderboard
+- Basic question types (MCQ, fill-blank, audio, surah-guess)
+- No multi-tenancy or organization structure
+- No payment system
+- No AI generation
+
+**Current Tech Stack:**
+
 - **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS + PostCSS + Custom fonts
+- **Styling**: Tailwind CSS + PostCSS + Custom fonts (including Arabic fonts)
 - **Backend**: Firebase (Auth + Firestore)
 - **State**: React Context (AuthContext, QuizContext)
-- **UI Components**: Custom components + Framer Motion
+- **UI Components**: Custom components + Framer Motion animations
 - **Routing**: React Router
+- **Icons**: Lucide React Icons
 
-### Target Stack
-- **Frontend**: React 18 + TypeScript + Vite (preserved)
-- **Styling**: Tailwind CSS (preserved, integrated with Laravel)
-- **Backend**: Laravel 10+ (PHP 8.1+)
-- **Database**: MySQL 8.0+
-- **Bridge**: Inertia.js (connects Laravel routes to React components)
-- **Auth**: Laravel Sanctum (SPA authentication)
-- **API**: RESTful JSON API + Inertia SSR
+### Target Application (JAMB/WAEC Mock CBT Platform)
 
-### Why Inertia.js?
-- Keeps existing React components intact
-- No need to build separate REST API for everything
-- Server-side routing with client-side rendering
-- Built-in CSRF protection
-- Seamless Laravel validation integration
+**New Features Required:**
+
+- Multi-school system (each school is isolated)
+- Three user roles: Super Admin, School Admin, Student
+- AI-powered question generation (GPT-4.1 API)
+- Multiple exam types (JAMB, WAEC, NECO)
+- 4 subjects per exam with individual timers
+- CSV bulk upload for students and questions
+- Subscription & payment integration (Paystack/Flutterwave)
+- Advanced exam interface with:
+  - Full-screen mode
+  - Subject tabs
+  - Global + per-subject timers
+  - Auto-save every 10 seconds
+  - Question grid with color states
+  - Answer review after submission
+- School-specific analytics dashboard
+- Question bank management per school
+
+**New Tech Stack:**
+
+- **Frontend**: Laravel Blade + Livewire 3 + Alpine.js
+- **Styling**: Tailwind CSS (preserved) + Lucide Icons
+- **Backend**: Laravel 11 (PHP 8.2+)
+- **Database**: MySQL 8.0+ (InnoDB)
+- **Real-time**: Livewire polling for auto-save
+- **Auth**: Laravel Breeze + Multi-role system
+- **Payments**: Paystack/Flutterwave PHP SDK
+- **AI**: OpenAI GPT-4.1 API integration
+- **Animations**: Alpine.js + Tailwind transitions (replacing Framer Motion)
+
+### Why Livewire Instead of Inertia?
+
+**For this CBT platform, Livewire is better because:**
+
+1. **Real-time updates**: Auto-save, timers, and state management are simpler with Livewire's reactive properties
+2. **Less complexity**: No need for API layer between frontend and backend
+3. **Built-in form handling**: Perfect for admin panels and student forms
+4. **Polling support**: Native support for auto-save every 10 seconds
+5. **Smaller learning curve**: Easier to maintain for future developers
+6. **Better for admin dashboards**: Rich data tables, filters, and CRUD operations
+7. **Shared hosting friendly**: Less JavaScript bundling, faster load times
+
+### Migration Strategy
+
+**Phase A: Technical Migration (React → Laravel + Livewire)**
+
+- Convert React components to Livewire components
+- Replace Firebase Auth with Laravel Authentication
+- Migrate Firestore data structure to MySQL
+- Convert React Router to Laravel routes
+- Replace Framer Motion with Alpine.js animations
+- Keep Tailwind CSS configuration
+
+**Phase B: Feature Transformation (Quiz App → CBT Platform)**
+
+- Add school management system
+- Implement multi-role authentication
+- Build AI question generation module
+- Create exam interface with advanced features
+- Add subscription & payment system
+- Build comprehensive admin dashboards
+
+---
+
+## Feature Comparison
+
+### Feature Mapping: Quran Quiz → JAMB/WAEC CBT
+
+| Quran Quiz Feature | JAMB/WAEC Equivalent        | Changes Required                                     |
+| ------------------ | --------------------------- | ---------------------------------------------------- |
+| User registration  | Student registration        | Add school_id, bulk CSV upload                       |
+| Single quiz type   | Multiple exam types         | Add exam templates (JAMB/WAEC/NECO)                  |
+| Firebase Auth      | Laravel Auth                | Multi-role system (Super Admin/School Admin/Student) |
+| Simple timer       | Dual timer system           | Global 2hr + 30min per subject                       |
+| Single leaderboard | School-specific leaderboard | Per-school isolation                                 |
+| Manual questions   | AI + Manual questions       | Integrate GPT-4.1 API                                |
+| Basic MCQ          | Advanced MCQ (4-5 options)  | Support A-E options                                  |
+| Free access        | Subscription-based          | Add Paystack/Flutterwave                             |
+| Instant start      | Scheduled exams             | Add exam scheduling                                  |
+| Single context     | Multi-school context        | Add school isolation                                 |
+| Basic result page  | Comprehensive analytics     | Charts, subject breakdown, review                    |
+
+### Components to Preserve from React App
+
+**UI Components (Convert to Livewire):**
+
+- ✅ Button.tsx → Button Blade component
+- ✅ Input.tsx → Input Blade component
+- ✅ Modal.tsx → Livewire Modal component
+- ✅ Loader.tsx → Livewire loading states
+- ✅ Navbar.tsx → Blade layout with Alpine.js
+- ✅ Footer.tsx → Blade partial
+- ✅ QuizCard.tsx → ExamCard Livewire component
+- ✅ ScoreBoard.tsx → ResultCard Livewire component
+
+**Design Elements to Preserve:**
+
+- ✅ Tailwind configuration (colors, fonts, spacing)
+- ✅ Arabic font support (for multilingual questions)
+- ✅ Gradient backgrounds
+- ✅ Card-based layouts
+- ✅ Responsive breakpoints
+- ✅ Animation patterns (convert to Alpine.js)
+- ✅ Color scheme and theming
+
+**Business Logic to Adapt:**
+
+- Quiz flow → Exam session management
+- Answer tracking → Multi-subject answer storage
+- Score calculation → Advanced grading system
+- Timer logic → Dual timer system
+- User context → Multi-role context
 
 ---
 
 ## Prerequisites
 
 ### Software Requirements
+
 - ✅ PHP 8.1 or higher
 - ✅ Composer (latest)
 - ✅ Node.js 18+ and npm
@@ -64,12 +199,14 @@
 - ✅ XAMPP (already installed)
 
 ### Knowledge Requirements
+
 - Laravel basics (routing, controllers, migrations)
 - React and TypeScript
 - Inertia.js concepts
 - MySQL database design
 
 ### Verify Installations
+
 ```powershell
 php -v
 composer -V
@@ -83,6 +220,7 @@ mysql --version
 ## Phase 0: Preparation & Backup
 
 ### Step 0.1: Commit Current State
+
 ```powershell
 cd c:\xampp\htdocs\examine
 git status
@@ -92,7 +230,9 @@ git tag v1.0-firebase
 ```
 
 ### Step 0.2: Document Current Functionality
+
 Create a checklist of features to preserve:
+
 - [ ] User registration with email validation
 - [ ] User login/logout
 - [ ] Quiz listing (all quizzes)
@@ -109,6 +249,7 @@ Create a checklist of features to preserve:
 - [ ] Form validations (client-side)
 
 ### Step 0.3: Backup examine/ folder
+
 ```powershell
 Copy-Item -Path "examine" -Destination "examine-backup-firebase" -Recurse
 ```
@@ -118,6 +259,7 @@ Copy-Item -Path "examine" -Destination "examine-backup-firebase" -Recurse
 ## Phase 1: Install Laravel & Dependencies
 
 ### Step 1.1: Create Laravel Project in Root
+
 ```powershell
 cd c:\xampp\htdocs\examine
 composer create-project laravel/laravel backend --prefer-dist
@@ -126,6 +268,7 @@ composer create-project laravel/laravel backend --prefer-dist
 **Note**: This creates a `backend` folder. We'll keep `examine/` for reference and gradually migrate.
 
 ### Step 1.2: Install Laravel Packages
+
 ```powershell
 cd backend
 composer require inertiajs/inertia-laravel
@@ -134,6 +277,7 @@ composer require laravel/breeze --dev
 ```
 
 ### Step 1.3: Install Node Dependencies
+
 ```powershell
 npm install
 npm install @inertiajs/react react react-dom
@@ -144,11 +288,13 @@ npm install -D @types/react @types/react-dom
 ```
 
 ### Step 1.4: Publish Inertia Middleware
+
 ```powershell
 php artisan inertia:middleware
 ```
 
 Add to `app/Http/Kernel.php`:
+
 ```php
 'web' => [
     // ...
@@ -157,6 +303,7 @@ Add to `app/Http/Kernel.php`:
 ```
 
 ### Step 1.5: Install Sanctum
+
 ```powershell
 php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 ```
@@ -166,7 +313,9 @@ php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 ## Phase 2: Configure Laravel Environment
 
 ### Step 2.1: Configure .env
+
 Edit `backend/.env`:
+
 ```env
 APP_NAME="Examine Quiz"
 APP_ENV=local
@@ -187,11 +336,13 @@ SANCTUM_STATEFUL_DOMAINS=localhost:8000,localhost:3000
 ```
 
 ### Step 2.2: Generate App Key
+
 ```powershell
 php artisan key:generate
 ```
 
 ### Step 2.3: Create Database
+
 ```powershell
 # Access MySQL via XAMPP
 mysql -u root -p
@@ -202,7 +353,9 @@ EXIT;
 ```
 
 ### Step 2.4: Configure CORS (if needed)
+
 Edit `config/cors.php`:
+
 ```php
 'paths' => ['api/*', 'sanctum/csrf-cookie'],
 'supports_credentials' => true,
@@ -212,286 +365,948 @@ Edit `config/cors.php`:
 
 ## Phase 3: Database Schema & Migrations
 
-### Step 3.1: Plan Database Schema
+### Step 3.1: Plan Database Schema for CBT Platform
 
-**Tables to Create:**
-1. `users` (extends Laravel default)
-2. `quizzes`
-3. `questions`
-4. `quiz_attempts`
-5. `question_answers`
-6. `leaderboard` (view or table)
-7. `badges`
-8. `user_badges`
+**Core Tables:**
+
+1. `users` - All users (Super Admin, School Admin, Students)
+2. `schools` - Registered institutions
+3. `subscriptions` - School billing & plans
+4. `students` - Student-specific data
+5. `subjects` - Subject master list
+6. `exams` - Exam templates
+7. `exam_schedules` - Scheduled exam sessions
+8. `questions` - Question bank
+9. `exam_questions` - Question mapping per exam
+10. `exam_attempts` - Student exam sessions
+11. `student_answers` - Individual answers
+12. `ai_prompts` - GPT prompt logs
+13. `payments` - Transaction records
+
+**Schema Design Principles:**
+
+- Each school is isolated (school_id foreign key)
+- Soft deletes for all major tables
+- Timestamps for audit trail
+- JSON columns for flexible data (answers, options)
+- Indexes on frequently queried columns
 
 ### Step 3.2: Create Migration Files
+
 ```powershell
-php artisan make:migration create_quizzes_table
+# Core system tables
+php artisan make:migration create_schools_table
+php artisan make:migration create_subscriptions_table
+php artisan make:migration create_students_table
+php artisan make:migration add_role_and_school_to_users_table
+
+# Exam system tables
+php artisan make:migration create_subjects_table
+php artisan make:migration create_exams_table
+php artisan make:migration create_exam_schedules_table
 php artisan make:migration create_questions_table
-php artisan make:migration create_quiz_attempts_table
-php artisan make:migration create_question_answers_table
-php artisan make:migration create_badges_table
-php artisan make:migration create_user_badges_table
-php artisan make:migration add_profile_fields_to_users_table
+php artisan make:migration create_exam_questions_table
+
+# Attempt and answer tables
+php artisan make:migration create_exam_attempts_table
+php artisan make:migration create_student_answers_table
+
+# AI and payment tables
+php artisan make:migration create_ai_prompts_table
+php artisan make:migration create_payments_table
 ```
 
-### Step 3.3: Define Migrations
+### Step 3.3: Define Migrations for CBT Platform
 
-**Migration: create_quizzes_table.php**
+**Migration: create_schools_table.php**
+
 ```php
 public function up()
 {
-    Schema::create('quizzes', function (Blueprint $table) {
+    Schema::create('schools', function (Blueprint $table) {
         $table->id();
-        $table->string('title');
-        $table->text('description')->nullable();
-        $table->integer('time_limit')->nullable()->comment('Time limit in seconds');
-        $table->string('category', 100)->nullable();
-        $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('easy');
-        $table->integer('total_points')->default(0);
-        $table->integer('total_questions')->default(0);
-        $table->boolean('is_active')->default(true);
-        $table->string('icon')->nullable();
+        $table->string('name');
+        $table->string('code')->unique()->comment('Unique school identifier');
+        $table->string('email')->unique();
+        $table->string('phone');
+        $table->text('address')->nullable();
+        $table->string('logo')->nullable();
+        $table->enum('status', ['active', 'suspended', 'expired'])->default('active');
+        $table->integer('max_students')->default(50)->comment('Based on subscription');
+        $table->integer('current_students')->default(0);
         $table->timestamps();
         $table->softDeletes();
+
+        $table->index('code');
+        $table->index('status');
+    });
+}
+```
+
+**Migration: create_subscriptions_table.php**
+
+```php
+public function up()
+{
+    Schema::create('subscriptions', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->enum('plan', ['basic_50', 'standard_200', 'premium_500', 'enterprise_1000']);
+        $table->integer('student_limit');
+        $table->decimal('amount', 10, 2);
+        $table->date('start_date');
+        $table->date('end_date');
+        $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
+        $table->string('payment_reference')->nullable();
+        $table->timestamps();
+
+        $table->index(['school_id', 'status']);
+    });
+}
+```
+
+**Migration: create_students_table.php**
+
+```php
+public function up()
+{
+    Schema::create('students', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->string('student_id')->unique()->comment('School-specific student ID');
+        $table->string('full_name');
+        $table->string('class')->nullable();
+        $table->string('department')->nullable();
+        $table->string('exam_type')->nullable()->comment('JAMB, WAEC, NECO');
+        $table->json('selected_subjects')->nullable()->comment('4 subjects array');
+        $table->integer('total_exams_taken')->default(0);
+        $table->decimal('average_score', 5, 2)->default(0);
+        $table->timestamps();
+        $table->softDeletes();
+
+        $table->index(['school_id', 'student_id']);
+    });
+}
+```
+
+**Migration: create_subjects_table.php**
+
+```php
+public function up()
+{
+    Schema::create('subjects', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique();
+        $table->string('code', 10)->unique();
+        $table->text('description')->nullable();
+        $table->enum('category', ['science', 'arts', 'commercial', 'general'])->default('general');
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+}
+```
+
+**Migration: create_exams_table.php**
+
+```php
+public function up()
+{
+    Schema::create('exams', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->enum('exam_type', ['jamb', 'waec', 'neco', 'custom'])->default('jamb');
+        $table->integer('duration_minutes')->default(120)->comment('Total exam time');
+        $table->integer('subject_duration_minutes')->default(30);
+        $table->integer('questions_per_subject')->default(40);
+        $table->integer('total_marks')->default(400)->comment('100 per subject');
+        $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
+        $table->timestamps();
+        $table->softDeletes();
+
+        $table->index(['school_id', 'status']);
     });
 }
 ```
 
 **Migration: create_questions_table.php**
+
 ```php
 public function up()
 {
     Schema::create('questions', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
-        $table->enum('type', ['mcq', 'fill-blank', 'audio', 'surah-guess'])->default('mcq');
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->foreignId('subject_id')->constrained()->onDelete('cascade');
         $table->text('question');
-        $table->text('arabic_text')->nullable();
-        $table->string('audio_url')->nullable();
-        $table->json('choices')->nullable()->comment('Array of possible answers for MCQ');
-        $table->string('correct_answer');
+        $table->json('options')->comment('JSON: {A: "", B: "", C: "", D: "", E: ""}');
+        $table->char('correct_answer', 1)->comment('A, B, C, D, or E');
         $table->text('explanation')->nullable();
-        $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('easy');
-        $table->integer('points')->default(1);
+        $table->string('topic')->nullable();
+        $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('medium');
+        $table->enum('source', ['ai_generated', 'manual', 'csv_upload'])->default('manual');
+        $table->string('ai_prompt_id')->nullable()->comment('Reference to AI prompt if generated');
+        $table->integer('usage_count')->default(0)->comment('Times used in exams');
+        $table->timestamps();
+        $table->softDeletes();
+
+        $table->index(['school_id', 'subject_id']);
+        $table->index('source');
+    });
+}
+```
+
+**Migration: create_exam_schedules_table.php**
+
+```php
+public function up()
+{
+    Schema::create('exam_schedules', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('exam_id')->constrained()->onDelete('cascade');
+        $table->json('subject_ids')->comment('Array of 4 subject IDs');
+        $table->dateTime('start_date');
+        $table->dateTime('end_date');
+        $table->boolean('is_active')->default(true);
+        $table->text('instructions')->nullable();
+        $table->timestamps();
+
+        $table->index(['exam_id', 'is_active']);
+    });
+}
+```
+
+**Migration: create_exam_questions_table.php**
+
+```php
+public function up()
+{
+    Schema::create('exam_questions', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('exam_schedule_id')->constrained()->onDelete('cascade');
+        $table->foreignId('question_id')->constrained()->onDelete('cascade');
+        $table->foreignId('subject_id')->constrained();
         $table->integer('order')->default(0);
         $table->timestamps();
+
+        $table->unique(['exam_schedule_id', 'question_id']);
+        $table->index('subject_id');
     });
 }
 ```
 
-**Migration: create_quiz_attempts_table.php**
+**Migration: create_exam_attempts_table.php**
+
 ```php
 public function up()
 {
-    Schema::create('quiz_attempts', function (Blueprint $table) {
+    Schema::create('exam_attempts', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('student_id')->constrained()->onDelete('cascade');
+        $table->foreignId('exam_schedule_id')->constrained()->onDelete('cascade');
         $table->timestamp('started_at');
         $table->timestamp('completed_at')->nullable();
-        $table->integer('score')->default(0);
-        $table->integer('total_questions')->default(0);
-        $table->integer('correct_answers')->default(0);
-        $table->integer('time_spent')->nullable()->comment('Time spent in seconds');
-        $table->json('answers')->nullable()->comment('User answers');
-        $table->enum('status', ['in_progress', 'completed', 'abandoned'])->default('in_progress');
+        $table->integer('time_spent')->nullable()->comment('Seconds');
+        $table->json('subject_timers')->nullable()->comment('Time spent per subject');
+        $table->integer('total_score')->default(0);
+        $table->decimal('percentage', 5, 2)->default(0);
+        $table->json('subject_scores')->nullable()->comment('Score breakdown per subject');
+        $table->enum('status', ['in_progress', 'completed', 'auto_submitted', 'abandoned'])->default('in_progress');
         $table->timestamps();
-        
-        $table->index(['user_id', 'quiz_id']);
+
+        $table->index(['student_id', 'status']);
+        $table->index('exam_schedule_id');
     });
 }
 ```
 
-**Migration: create_question_answers_table.php**
+**Migration: create_student_answers_table.php**
+
 ```php
 public function up()
 {
-    Schema::create('question_answers', function (Blueprint $table) {
+    Schema::create('student_answers', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('attempt_id')->constrained('quiz_attempts')->onDelete('cascade');
+        $table->foreignId('exam_attempt_id')->constrained()->onDelete('cascade');
         $table->foreignId('question_id')->constrained()->onDelete('cascade');
-        $table->text('user_answer');
+        $table->foreignId('subject_id')->constrained();
+        $table->char('selected_answer', 1)->nullable()->comment('A, B, C, D, or E');
         $table->boolean('is_correct')->default(false);
-        $table->integer('points_earned')->default(0);
+        $table->boolean('is_flagged')->default(false);
         $table->integer('time_spent')->nullable();
         $table->timestamps();
-        
-        $table->unique(['attempt_id', 'question_id']);
+
+        $table->unique(['exam_attempt_id', 'question_id']);
+        $table->index('subject_id');
     });
 }
 ```
 
-**Migration: add_profile_fields_to_users_table.php**
+**Migration: create_ai_prompts_table.php**
+
+```php
+public function up()
+{
+    Schema::create('ai_prompts', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->foreignId('subject_id')->constrained();
+        $table->text('prompt');
+        $table->json('parameters')->comment('difficulty, topic, question_count, etc.');
+        $table->json('response')->nullable()->comment('Full GPT response');
+        $table->integer('questions_generated')->default(0);
+        $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
+        $table->text('error_message')->nullable();
+        $table->timestamps();
+
+        $table->index(['school_id', 'status']);
+    });
+}
+```
+
+**Migration: create_payments_table.php**
+
+```php
+public function up()
+{
+    Schema::create('payments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('school_id')->constrained()->onDelete('cascade');
+        $table->string('reference')->unique();
+        $table->decimal('amount', 10, 2);
+        $table->enum('payment_method', ['paystack', 'flutterwave', 'bank_transfer'])->default('paystack');
+        $table->enum('status', ['pending', 'successful', 'failed', 'cancelled'])->default('pending');
+        $table->json('meta')->nullable()->comment('Gateway response data');
+        $table->string('plan_type')->nullable();
+        $table->timestamps();
+
+        $table->index(['school_id', 'status']);
+        $table->index('reference');
+    });
+}
+```
+
+**Migration: add_role_and_school_to_users_table.php**
+
 ```php
 public function up()
 {
     Schema::table('users', function (Blueprint $table) {
-        $table->string('avatar')->nullable()->after('email');
-        $table->integer('total_points')->default(0)->after('avatar');
-        $table->integer('quizzes_completed')->default(0)->after('total_points');
+        $table->enum('role', ['super_admin', 'school_admin', 'student'])->default('student')->after('email');
+        $table->foreignId('school_id')->nullable()->constrained()->onDelete('cascade')->after('role');
         $table->timestamp('last_login_at')->nullable()->after('remember_token');
+        $table->boolean('is_active')->default(true)->after('last_login_at');
+
+        $table->index(['school_id', 'role']);
     });
 }
 ```
 
 ### Step 3.4: Run Migrations
+
 ```powershell
 php artisan migrate
 ```
 
-### Step 3.5: Create Models
+### Step 3.5: Create Models with Relationships
+
 ```powershell
-php artisan make:model Quiz
+php artisan make:model School
+php artisan make:model Subscription
+php artisan make:model Student
+php artisan make:model Subject
+php artisan make:model Exam
+php artisan make:model ExamSchedule
 php artisan make:model Question
-php artisan make:model QuizAttempt
-php artisan make:model QuestionAnswer
-php artisan make:model Badge
+php artisan make:model ExamQuestion
+php artisan make:model ExamAttempt
+php artisan make:model StudentAnswer
+php artisan make:model AiPrompt
+php artisan make:model Payment
 ```
+
+**Key Model Relationships:**
+
+- School hasMany Students, Exams, Questions, Subscriptions
+- Student belongsTo School, User; hasMany ExamAttempts
+- Exam belongsTo School; hasMany ExamSchedules
+- ExamSchedule hasMany ExamAttempts, ExamQuestions
+- Question belongsTo School, Subject
+- ExamAttempt belongsTo Student, ExamSchedule; hasMany StudentAnswers
 
 ---
 
-## Phase 4: API Routes & Controllers
+## Phase 4: Multi-Tenancy & School System
 
-### Step 4.1: Create Controllers
-```powershell
-php artisan make:controller Api/AuthController
-php artisan make:controller Api/QuizController
-php artisan make:controller Api/AttemptController
-php artisan make:controller Api/LeaderboardController
-php artisan make:controller Api/UserController
+### Step 4.1: Implement School Isolation
+
+Create a global scope for school-based filtering:
+
+**app/Models/Scopes/SchoolScope.php**
+
+```php
+<?php
+
+namespace App\Models\Scopes;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+
+class SchoolScope implements Scope
+{
+    public function apply(Builder $builder, Model $model)
+    {
+        if (auth()->check() && auth()->user()->role !== 'super_admin') {
+            $builder->where('school_id', auth()->user()->school_id);
+        }
+    }
+}
 ```
 
-### Step 4.2: Define API Routes
-Edit `routes/api.php`:
+Apply to models:
+
 ```php
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\QuizController;
-use App\Http\Controllers\Api\AttemptController;
-use App\Http\Controllers\Api\LeaderboardController;
+protected static function booted()
+{
+    static::addGlobalScope(new SchoolScope);
+}
+```
 
+### Step 4.2: School Registration System
+
+Create controller for school self-registration:
+
+```powershell
+php artisan make:controller SchoolRegistrationController
+```
+
+**Features:**
+
+- School signup form (name, email, phone, address)
+- Auto-generate unique school code
+- Create default admin user
+- Set initial subscription (trial 7 days)
+- Send welcome email with credentials
+
+### Step 4.3: Student Bulk Upload
+
+Create service for CSV processing:
+
+```powershell
+php artisan make:service StudentImportService
+```
+
+**CSV Format:**
+
+```
+student_id,full_name,email,class,department,exam_type,subject1,subject2,subject3,subject4
+STU001,John Doe,john@example.com,SS3,Science,JAMB,Mathematics,Physics,Chemistry,Biology
+```
+
+**Features:**
+
+- Validate CSV structure
+- Check for duplicates
+- Create users and students in bulk
+- Generate random passwords
+- Send credentials via email or downloadable PDF
+
+---
+
+## Phase 5: Authentication & Role System
+
+### Step 5.1: Install Laravel Breeze
+
+```powershell
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+php artisan migrate
+npm install && npm run dev
+```
+
+### Step 5.2: Modify Authentication for Multi-Role
+
+Update `app/Http/Middleware/RedirectIfAuthenticated.php`:
+
+```php
+public function handle(Request $request, Closure $next, string ...$guards): Response
+{
+    // Redirect based on role
+    if (Auth::check()) {
+        return match(auth()->user()->role) {
+            'super_admin' => redirect('/super-admin/dashboard'),
+            'school_admin' => redirect('/admin/dashboard'),
+            'student' => redirect('/student/dashboard'),
+            default => redirect('/'),
+        };
+    }
+    return $next($request);
+}
+```
+
+### Step 5.3: Create Role-Based Middleware
+
+```powershell
+php artisan make:middleware EnsureSuperAdmin
+php artisan make:middleware EnsureSchoolAdmin
+php artisan make:middleware EnsureStudent
+```
+
+**Register in `app/Http/Kernel.php`:**
+
+```php
+protected $middlewareAliases = [
+    'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
+    'school_admin' => \App\Http\Middleware\EnsureSchoolAdmin::class,
+    'student' => \App\Http\Middleware\EnsureStudent::class,
+];
+```
+
+### Step 5.4: Define Routes by Role
+
+Edit `routes/web.php`:
+
+```php
 // Public routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
-    
-    // Quizzes
-    Route::get('/quizzes', [QuizController::class, 'index']);
-    Route::get('/quizzes/{quiz}', [QuizController::class, 'show']);
-    
-    // Attempts
-    Route::post('/attempts', [AttemptController::class, 'store']);
-    Route::put('/attempts/{attempt}', [AttemptController::class, 'update']);
-    Route::post('/attempts/{attempt}/complete', [AttemptController::class, 'complete']);
-    Route::get('/attempts/{attempt}', [AttemptController::class, 'show']);
-    
-    // Leaderboard
-    Route::get('/leaderboard', [LeaderboardController::class, 'index']);
-    Route::get('/leaderboard/{quiz}', [LeaderboardController::class, 'show']);
+// School registration
+Route::get('/register-school', [SchoolRegistrationController::class, 'create']);
+Route::post('/register-school', [SchoolRegistrationController::class, 'store']);
+
+// Authentication routes (Breeze)
+require __DIR__.'/auth.php';
+
+// Super Admin routes
+Route::middleware(['auth', 'super_admin'])->prefix('super-admin')->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard']);
+    Route::resource('schools', SchoolController::class);
+    Route::resource('subscriptions', SubscriptionController::class);
+    Route::get('/analytics', [SuperAdminController::class, 'analytics']);
+});
+
+// School Admin routes
+Route::middleware(['auth', 'school_admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    Route::resource('students', StudentController::class);
+    Route::resource('exams', ExamController::class);
+    Route::resource('questions', QuestionController::class);
+    Route::post('/students/import', [StudentController::class, 'import']);
+    Route::post('/questions/generate-ai', [QuestionController::class, 'generateAI']);
+    Route::get('/analytics', [AdminController::class, 'analytics']);
+});
+
+// Student routes
+Route::middleware(['auth', 'student'])->prefix('student')->group(function () {
+    Route::get('/dashboard', [StudentController::class, 'dashboard']);
+    Route::get('/exams', [StudentExamController::class, 'index']);
+    Route::get('/exams/{exam}/start', [StudentExamController::class, 'start']);
+    Route::get('/exams/{attempt}/continue', [StudentExamController::class, 'continue']);
+    Route::get('/results', [StudentResultController::class, 'index']);
+    Route::get('/results/{attempt}', [StudentResultController::class, 'show']);
 });
 ```
 
-### Step 4.3: Implement AuthController
-**Key methods:**
-- `register()` - Create new user with validation
-- `login()` - Authenticate and return token/session
-- `logout()` - Revoke token
-- `user()` - Return authenticated user
+---
 
-### Step 4.4: Implement QuizController
-**Key methods:**
-- `index()` - List all active quizzes
-- `show($id)` - Get quiz with questions
-- `store()` - Create quiz (admin)
-- `update()` - Update quiz (admin)
+## Phase 6: Livewire Components
 
-### Step 4.5: Implement AttemptController
-**Key methods:**
-- `store()` - Start new quiz attempt
-- `update()` - Save answer to question
-- `complete()` - Finish attempt and calculate score
-- `show()` - Get attempt details
+### Step 6.1: Install Livewire 3
+
+```powershell
+composer require livewire/livewire
+php artisan livewire:publish --config
+php artisan livewire:publish --assets
+```
+
+### Step 6.2: Create Core Livewire Components
+
+**Admin Dashboard Components:**
+
+```powershell
+php artisan make:livewire Admin/Dashboard
+php artisan make:livewire Admin/StudentManager
+php artisan make:livewire Admin/ExamBuilder
+php artisan make:livewire Admin/QuestionManager
+php artisan make:livewire Admin/AnalyticsDashboard
+```
+
+**Student Exam Components:**
+
+```powershell
+php artisan make:livewire Student/ExamInterface
+php artisan make:livewire Student/ExamDashboard
+php artisan make:livewire Student/ResultsView
+php artisan make:livewire Student/QuestionGrid
+php artisan make:livewire Student/ExamTimer
+```
+
+**Shared Components:**
+
+```powershell
+php artisan make:livewire Components/Notification
+php artisan make:livewire Components/Modal
+php artisan make:livewire Components/DataTable
+```
+
+### Step 6.3: Example - ExamInterface Livewire Component
+
+**app/Livewire/Student/ExamInterface.php**
+
+```php
+<?php
+
+namespace App\Livewire\Student;
+
+use Livewire\Component;
+use App\Models\ExamAttempt;
+use App\Models\StudentAnswer;
+
+class ExamInterface extends Component
+{
+    public ExamAttempt $attempt;
+    public $currentSubject;
+    public $currentQuestionIndex = 0;
+    public $questions = [];
+    public $answers = [];
+    public $timeRemaining;
+    public $subjectTimeRemaining;
+
+    protected $listeners = ['answerSelected', 'timerExpired'];
+
+    public function mount($attemptId)
+    {
+        $this->attempt = ExamAttempt::with(['examSchedule.examQuestions.question'])
+            ->findOrFail($attemptId);
+
+        $this->loadQuestions();
+        $this->loadAnswers();
+        $this->currentSubject = $this->questions[0]['subject_id'] ?? null;
+    }
+
+    public function loadQuestions()
+    {
+        $this->questions = $this->attempt->examSchedule->examQuestions()
+            ->with('question', 'subject')
+            ->orderBy('subject_id')
+            ->orderBy('order')
+            ->get()
+            ->toArray();
+    }
+
+    public function loadAnswers()
+    {
+        $this->answers = StudentAnswer::where('exam_attempt_id', $this->attempt->id)
+            ->pluck('selected_answer', 'question_id')
+            ->toArray();
+    }
+
+    public function selectAnswer($questionId, $answer)
+    {
+        StudentAnswer::updateOrCreate(
+            [
+                'exam_attempt_id' => $this->attempt->id,
+                'question_id' => $questionId,
+            ],
+            [
+                'selected_answer' => $answer,
+                'subject_id' => $this->currentSubject,
+            ]
+        );
+
+        $this->answers[$questionId] = $answer;
+        $this->dispatch('answer-saved');
+    }
+
+    public function goToQuestion($index)
+    {
+        $this->currentQuestionIndex = $index;
+    }
+
+    public function nextQuestion()
+    {
+        if ($this->currentQuestionIndex < count($this->questions) - 1) {
+            $this->currentQuestionIndex++;
+            $this->updateSubjectIfNeeded();
+        }
+    }
+
+    public function previousQuestion()
+    {
+        if ($this->currentQuestionIndex > 0) {
+            $this->currentQuestionIndex--;
+            $this->updateSubjectIfNeeded();
+        }
+    }
+
+    public function switchSubject($subjectId)
+    {
+        $this->currentSubject = $subjectId;
+        $firstQuestionIndex = collect($this->questions)
+            ->search(fn($q) => $q['subject_id'] == $subjectId);
+        $this->currentQuestionIndex = $firstQuestionIndex !== false ? $firstQuestionIndex : 0;
+    }
+
+    public function submitExam()
+    {
+        $this->attempt->update([
+            'completed_at' => now(),
+            'status' => 'completed',
+        ]);
+
+        $this->calculateScore();
+
+        return redirect()->route('student.results.show', $this->attempt);
+    }
+
+    private function calculateScore()
+    {
+        $answers = StudentAnswer::where('exam_attempt_id', $this->attempt->id)->get();
+        $totalScore = 0;
+        $subjectScores = [];
+
+        foreach ($answers as $answer) {
+            $question = $answer->question;
+            $isCorrect = $answer->selected_answer === $question->correct_answer;
+
+            $answer->update(['is_correct' => $isCorrect]);
+
+            if ($isCorrect) {
+                $totalScore += 2.5; // 100 marks / 40 questions
+                $subjectScores[$answer->subject_id] = ($subjectScores[$answer->subject_id] ?? 0) + 2.5;
+            }
+        }
+
+        $this->attempt->update([
+            'total_score' => $totalScore,
+            'percentage' => ($totalScore / 400) * 100,
+            'subject_scores' => $subjectScores,
+        ]);
+    }
+
+    public function render()
+    {
+        return view('livewire.student.exam-interface', [
+            'currentQuestion' => $this->questions[$this->currentQuestionIndex] ?? null,
+        ]);
+    }
+}
+```
+
+### Step 6.4: Example - ExamInterface Blade View
+
+**resources/views/livewire/student/exam-interface.blade.php**
+
+```blade
+<div class="min-h-screen bg-gray-100" x-data="examInterface()">
+    <!-- Header -->
+    <div class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">{{ $attempt->examSchedule->exam->title }}</h1>
+
+        <!-- Subject Tabs -->
+        <div class="flex gap-2">
+            @foreach($attempt->examSchedule->subjects as $subject)
+                <button
+                    wire:click="switchSubject({{ $subject->id }})"
+                    class="px-4 py-2 rounded {{ $currentSubject == $subject->id ? 'bg-purple-600 text-white' : 'bg-gray-200' }}">
+                    {{ $subject->name }}
+                </button>
+            @endforeach
+        </div>
+
+        <!-- Timer -->
+        <livewire:student.exam-timer :attempt="$attempt" />
+    </div>
+
+    <div class="flex h-[calc(100vh-80px)]">
+        <!-- Left Panel - Question -->
+        <div class="flex-1 p-8 overflow-y-auto">
+            @if($currentQuestion)
+                <div class="bg-white rounded-lg p-6 shadow">
+                    <h2 class="text-lg font-semibold mb-4">
+                        Question {{ $currentQuestionIndex + 1 }} of {{ count($questions) }}
+                    </h2>
+
+                    <p class="text-gray-800 mb-6">{{ $currentQuestion['question']['question'] }}</p>
+
+                    <!-- Options -->
+                    <div class="space-y-3">
+                        @foreach(json_decode($currentQuestion['question']['options'], true) as $key => $option)
+                            <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-purple-50 transition
+                                {{ ($answers[$currentQuestion['question']['id']] ?? null) == $key ? 'border-purple-600 bg-purple-50' : 'border-gray-300' }}">
+                                <input
+                                    type="radio"
+                                    name="answer"
+                                    value="{{ $key }}"
+                                    wire:click="selectAnswer({{ $currentQuestion['question']['id'] }}, '{{ $key }}')"
+                                    {{ ($answers[$currentQuestion['question']['id']] ?? null) == $key ? 'checked' : '' }}
+                                    class="mr-3">
+                                <span class="font-medium mr-2">{{ $key }}.</span>
+                                <span>{{ $option }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex justify-between mt-6">
+                        <button
+                            wire:click="previousQuestion"
+                            @disabled($currentQuestionIndex === 0)
+                            class="px-6 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50">
+                            Previous
+                        </button>
+
+                        @if($currentQuestionIndex < count($questions) - 1)
+                            <button
+                                wire:click="nextQuestion"
+                                class="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                                Next
+                            </button>
+                        @else
+                            <button
+                                wire:click="submitExam"
+                                class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Submit Exam
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Right Panel - Question Grid -->
+        <div class="w-80 bg-white p-6 border-l overflow-y-auto">
+            <h3 class="font-semibold mb-4">Questions</h3>
+            <div class="grid grid-cols-5 gap-2">
+                @foreach($questions as $index => $question)
+                    <button
+                        wire:click="goToQuestion({{ $index }})"
+                        class="w-10 h-10 rounded flex items-center justify-center text-sm font-medium
+                            {{ isset($answers[$question['question']['id']]) ? 'bg-purple-600 text-white' : 'bg-gray-200' }}
+                            {{ $index === $currentQuestionIndex ? 'ring-2 ring-purple-800' : '' }}">
+                        {{ $index + 1 }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-save indicator -->
+    <div wire:loading class="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow">
+        Saving...
+    </div>
+</div>
+
+@script
+<script>
+    Alpine.data('examInterface', () => ({
+        init() {
+            // Prevent page refresh
+            window.onbeforeunload = () => "Exam in progress. Are you sure you want to leave?";
+
+            // Auto-save to localStorage
+            setInterval(() => {
+                localStorage.setItem('exam_backup', JSON.stringify(this.$wire.answers));
+            }, 5000);
+        }
+    }));
+</script>
+@endscript
+```
 
 ---
 
-## Phase 5: Integrate React + Inertia
+## Phase 7: AI Question Generation (GPT-4)
 
 ### Step 5.1: Configure Vite for Inertia + React
+
 Edit `backend/vite.config.js`:
+
 ```js
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-    plugins: [
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
-            refresh: true,
-        }),
-        react(),
-    ],
-    resolve: {
-        alias: {
-            '@': '/resources/js',
-        },
+  plugins: [
+    laravel({
+      input: ["resources/css/app.css", "resources/js/app.tsx"],
+      refresh: true,
+    }),
+    react(),
+  ],
+  resolve: {
+    alias: {
+      "@": "/resources/js",
     },
+  },
 });
 ```
 
 ### Step 5.2: Create Inertia App Entry Point
+
 Create `backend/resources/js/app.tsx`:
+
 ```tsx
-import './bootstrap';
-import '../css/app.css';
+import "./bootstrap";
+import "../css/app.css";
 
-import { createRoot } from 'react-dom/client';
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createRoot } from "react-dom/client";
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Examine';
+const appName =
+  window.document.getElementsByTagName("title")[0]?.innerText || "Examine";
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx')),
-    setup({ el, App, props }) {
-        const root = createRoot(el);
-        root.render(<App {...props} />);
-    },
-    progress: {
-        color: '#4B5563',
-    },
+  title: (title) => `${title} - ${appName}`,
+  resolve: (name) =>
+    resolvePageComponent(
+      `./Pages/${name}.tsx`,
+      import.meta.glob("./Pages/**/*.tsx")
+    ),
+  setup({ el, App, props }) {
+    const root = createRoot(el);
+    root.render(<App {...props} />);
+  },
+  progress: {
+    color: "#4B5563",
+  },
 });
 ```
 
 ### Step 5.3: Create Base Layout
+
 Create `backend/resources/js/Layouts/AppLayout.tsx`:
+
 ```tsx
-import React, { ReactNode } from 'react';
-import { Link } from '@inertiajs/react';
-import Navbar from '@/Components/Navbar';
-import Footer from '@/Components/Footer';
+import React, { ReactNode } from "react";
+import { Link } from "@inertiajs/react";
+import Navbar from "@/Components/Navbar";
+import Footer from "@/Components/Footer";
 
 interface Props {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 export default function AppLayout({ children }: Props) {
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-        </div>
-    );
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <Navbar />
+      <main>{children}</main>
+      <Footer />
+    </div>
+  );
 }
 ```
 
 ### Step 5.4: Move React Components
+
 ```powershell
 # Create directories
 New-Item -ItemType Directory -Path "backend\resources\js\Pages"
@@ -510,7 +1325,9 @@ Copy-Item -Path "examine\src\types\*" -Destination "backend\resources\js\types" 
 ```
 
 ### Step 5.5: Update Imports
+
 Replace all imports in copied files:
+
 - `import { BrowserRouter, Routes, Route }` → Use Inertia Link/router
 - Firebase imports → Remove, use Inertia/axios
 - Relative imports `../components` → `@/Components`
@@ -520,36 +1337,40 @@ Replace all imports in copied files:
 ## Phase 6: Preserve Design System
 
 ### Step 6.1: Copy Tailwind Config
+
 ```powershell
 Copy-Item -Path "examine\tailwind.config.js" -Destination "backend\tailwind.config.js"
 Copy-Item -Path "examine\postcss.config.js" -Destination "backend\postcss.config.js"
 ```
 
 ### Step 6.2: Update Tailwind Config
+
 Edit `backend/tailwind.config.js`:
+
 ```js
 export default {
-    content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
-        './resources/js/**/*.tsx',
-        './resources/js/**/*.ts',
-    ],
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Figtree', 'sans-serif'],
-                arabic: ['Amiri', 'serif'],
-            },
-            // Copy custom colors, animations from examine/tailwind.config.js
-        },
+  content: [
+    "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
+    "./storage/framework/views/*.php",
+    "./resources/views/**/*.blade.php",
+    "./resources/js/**/*.tsx",
+    "./resources/js/**/*.ts",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Figtree", "sans-serif"],
+        arabic: ["Amiri", "serif"],
+      },
+      // Copy custom colors, animations from examine/tailwind.config.js
     },
-    plugins: [],
+  },
+  plugins: [],
 };
 ```
 
 ### Step 6.3: Copy CSS and Fonts
+
 ```powershell
 # Copy CSS
 Copy-Item -Path "examine\src\index.css" -Destination "backend\resources\css\app.css"
@@ -560,11 +1381,13 @@ Copy-Item -Path "examine\src\assets\fonts\*" -Destination "backend\public\assets
 ```
 
 ### Step 6.4: Update Font Paths
+
 Edit `backend/resources/css/app.css` - update `@font-face` paths:
+
 ```css
 @font-face {
-    font-family: 'YourFont';
-    src: url('/assets/fonts/YourFont.woff2') format('woff2');
+  font-family: "YourFont";
+  src: url("/assets/fonts/YourFont.woff2") format("woff2");
 }
 ```
 
@@ -576,102 +1399,116 @@ Edit `backend/resources/css/app.css` - update `@font-face` paths:
 
 **Firebase (examine/src/services/auth.ts) → Laravel**
 
-| Firebase Method | Laravel Equivalent |
-|----------------|-------------------|
-| `createUserWithEmailAndPassword()` | `POST /api/register` |
-| `signInWithEmailAndPassword()` | `POST /api/login` |
-| `signOut()` | `POST /api/logout` |
-| `onAuthStateChanged()` | `GET /api/user` (polling or on mount) |
+| Firebase Method                    | Laravel Equivalent                    |
+| ---------------------------------- | ------------------------------------- |
+| `createUserWithEmailAndPassword()` | `POST /api/register`                  |
+| `signInWithEmailAndPassword()`     | `POST /api/login`                     |
+| `signOut()`                        | `POST /api/logout`                    |
+| `onAuthStateChanged()`             | `GET /api/user` (polling or on mount) |
 
 ### Step 7.2: Update AuthContext
+
 Create `backend/resources/js/contexts/AuthContext.tsx`:
+
 ```tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    total_points: number;
-    quizzes_completed: number;
+  id: number;
+  name: string;
+  email: string;
+  avatar?: string;
+  total_points: number;
+  quizzes_completed: number;
 }
 
 interface AuthContextType {
-    user: User | null;
-    login: (email: string, password: string) => Promise<void>;
-    register: (name: string, email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
-    loading: boolean;
+  user: User | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-    const checkAuth = async () => {
-        try {
-            const { data } = await axios.get('/api/user');
-            setUser(data);
-        } catch (error) {
-            setUser(null);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const checkAuth = async () => {
+    try {
+      const { data } = await axios.get("/api/user");
+      setUser(data);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const login = async (email: string, password: string) => {
-        await axios.get('/sanctum/csrf-cookie');
-        const { data } = await axios.post('/api/login', { email, password });
-        setUser(data.user);
-    };
+  const login = async (email: string, password: string) => {
+    await axios.get("/sanctum/csrf-cookie");
+    const { data } = await axios.post("/api/login", { email, password });
+    setUser(data.user);
+  };
 
-    const register = async (name: string, email: string, password: string, password_confirmation: string) => {
-        await axios.get('/sanctum/csrf-cookie');
-        const { data } = await axios.post('/api/register', { name, email, password, password_confirmation });
-        setUser(data.user);
-    };
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string
+  ) => {
+    await axios.get("/sanctum/csrf-cookie");
+    const { data } = await axios.post("/api/register", {
+      name,
+      email,
+      password,
+      password_confirmation,
+    });
+    setUser(data.user);
+  };
 
-    const logout = async () => {
-        await axios.post('/api/logout');
-        setUser(null);
-    };
+  const logout = async () => {
+    await axios.post("/api/logout");
+    setUser(null);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) throw new Error('useAuth must be used within AuthProvider');
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
 };
 ```
 
 ### Step 7.3: Update Login/Register Pages
+
 Update imports and replace Firebase calls with context methods:
+
 ```tsx
 // In Login.tsx
 const { login } = useAuth();
 
 const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-        await login(email, password);
-        // Inertia will handle redirect
-    } catch (error) {
-        setError(error.response?.data?.message);
-    }
+  e.preventDefault();
+  try {
+    await login(email, password);
+    // Inertia will handle redirect
+  } catch (error) {
+    setError(error.response?.data?.message);
+  }
 };
 ```
 
@@ -681,90 +1518,101 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 ### Step 8.1: Map Firestore Methods to Laravel API
 
-| Firestore Operation | Laravel API |
-|-------------------|-------------|
-| `collection('quizzes').get()` | `GET /api/quizzes` |
-| `doc('quizzes', id).get()` | `GET /api/quizzes/{id}` |
-| `collection('attempts').add()` | `POST /api/attempts` |
-| `doc('attempts', id).update()` | `PUT /api/attempts/{id}` |
-| `onSnapshot()` | Replace with polling or remove |
+| Firestore Operation            | Laravel API                    |
+| ------------------------------ | ------------------------------ |
+| `collection('quizzes').get()`  | `GET /api/quizzes`             |
+| `doc('quizzes', id).get()`     | `GET /api/quizzes/{id}`        |
+| `collection('attempts').add()` | `POST /api/attempts`           |
+| `doc('attempts', id).update()` | `PUT /api/attempts/{id}`       |
+| `onSnapshot()`                 | Replace with polling or remove |
 
 ### Step 8.2: Update QuizContext
+
 Create `backend/resources/js/contexts/QuizContext.tsx`:
+
 ```tsx
-import React, { createContext, useContext, useState } from 'react';
-import axios from 'axios';
-import { Quiz, Question, QuizAttempt } from '@/types';
+import React, { createContext, useContext, useState } from "react";
+import axios from "axios";
+import { Quiz, Question, QuizAttempt } from "@/types";
 
 interface QuizContextType {
-    quizzes: Quiz[];
-    currentQuiz: Quiz | null;
-    currentAttempt: QuizAttempt | null;
-    loadQuizzes: () => Promise<void>;
-    startQuiz: (quizId: number) => Promise<void>;
-    submitAnswer: (questionId: number, answer: string) => Promise<void>;
-    completeQuiz: () => Promise<void>;
+  quizzes: Quiz[];
+  currentQuiz: Quiz | null;
+  currentAttempt: QuizAttempt | null;
+  loadQuizzes: () => Promise<void>;
+  startQuiz: (quizId: number) => Promise<void>;
+  submitAnswer: (questionId: number, answer: string) => Promise<void>;
+  completeQuiz: () => Promise<void>;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 export function QuizProvider({ children }: { children: React.ReactNode }) {
-    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-    const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
-    const [currentAttempt, setCurrentAttempt] = useState<QuizAttempt | null>(null);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
+  const [currentAttempt, setCurrentAttempt] = useState<QuizAttempt | null>(
+    null
+  );
 
-    const loadQuizzes = async () => {
-        const { data } = await axios.get('/api/quizzes');
-        setQuizzes(data);
-    };
+  const loadQuizzes = async () => {
+    const { data } = await axios.get("/api/quizzes");
+    setQuizzes(data);
+  };
 
-    const startQuiz = async (quizId: number) => {
-        const { data: quiz } = await axios.get(`/api/quizzes/${quizId}`);
-        setCurrentQuiz(quiz);
-        
-        const { data: attempt } = await axios.post('/api/attempts', { quiz_id: quizId });
-        setCurrentAttempt(attempt);
-    };
+  const startQuiz = async (quizId: number) => {
+    const { data: quiz } = await axios.get(`/api/quizzes/${quizId}`);
+    setCurrentQuiz(quiz);
 
-    const submitAnswer = async (questionId: number, answer: string) => {
-        if (!currentAttempt) return;
-        
-        await axios.put(`/api/attempts/${currentAttempt.id}`, {
-            question_id: questionId,
-            answer,
-        });
-    };
+    const { data: attempt } = await axios.post("/api/attempts", {
+      quiz_id: quizId,
+    });
+    setCurrentAttempt(attempt);
+  };
 
-    const completeQuiz = async () => {
-        if (!currentAttempt) return;
-        
-        const { data } = await axios.post(`/api/attempts/${currentAttempt.id}/complete`);
-        setCurrentAttempt(data);
-    };
+  const submitAnswer = async (questionId: number, answer: string) => {
+    if (!currentAttempt) return;
 
-    return (
-        <QuizContext.Provider value={{ 
-            quizzes, 
-            currentQuiz, 
-            currentAttempt,
-            loadQuizzes, 
-            startQuiz, 
-            submitAnswer, 
-            completeQuiz 
-        }}>
-            {children}
-        </QuizContext.Provider>
+    await axios.put(`/api/attempts/${currentAttempt.id}`, {
+      question_id: questionId,
+      answer,
+    });
+  };
+
+  const completeQuiz = async () => {
+    if (!currentAttempt) return;
+
+    const { data } = await axios.post(
+      `/api/attempts/${currentAttempt.id}/complete`
     );
+    setCurrentAttempt(data);
+  };
+
+  return (
+    <QuizContext.Provider
+      value={{
+        quizzes,
+        currentQuiz,
+        currentAttempt,
+        loadQuizzes,
+        startQuiz,
+        submitAnswer,
+        completeQuiz,
+      }}
+    >
+      {children}
+    </QuizContext.Provider>
+  );
 }
 
 export const useQuiz = () => {
-    const context = useContext(QuizContext);
-    if (!context) throw new Error('useQuiz must be used within QuizProvider');
-    return context;
+  const context = useContext(QuizContext);
+  if (!context) throw new Error("useQuiz must be used within QuizProvider");
+  return context;
 };
 ```
 
 ### Step 8.3: Update Quiz Pages
+
 Update all quiz-related pages to use new context and remove Firebase dependencies.
 
 ---
@@ -772,10 +1620,13 @@ Update all quiz-related pages to use new context and remove Firebase dependencie
 ## Phase 9: Testing & Validation
 
 ### Step 9.1: Preserve Client-Side Validation
+
 Keep all validation logic in React components (Register.tsx, Login.tsx, Quiz.tsx).
 
 ### Step 9.2: Add Server-Side Validation
+
 Create FormRequests:
+
 ```powershell
 php artisan make:request RegisterRequest
 php artisan make:request LoginRequest
@@ -783,7 +1634,9 @@ php artisan make:request SubmitAnswerRequest
 ```
 
 ### Step 9.3: Test All Features
+
 **Manual Testing Checklist:**
+
 - [ ] Register new user
 - [ ] Login with valid credentials
 - [ ] Login with invalid credentials (test errors)
@@ -801,6 +1654,7 @@ php artisan make:request SubmitAnswerRequest
 - [ ] Responsive design intact
 
 ### Step 9.4: Create Seeders
+
 ```powershell
 php artisan make:seeder QuizSeeder
 php artisan make:seeder QuestionSeeder
@@ -812,11 +1666,13 @@ php artisan db:seed
 ## Phase 10: Deployment Prep
 
 ### Step 10.1: Build for Production
+
 ```powershell
 npm run build
 ```
 
 ### Step 10.2: Optimize Laravel
+
 ```powershell
 php artisan config:cache
 php artisan route:cache
@@ -824,13 +1680,16 @@ php artisan view:cache
 ```
 
 ### Step 10.3: Environment Configuration
+
 Update `.env` for production:
+
 ```env
 APP_ENV=production
 APP_DEBUG=false
 ```
 
 ### Step 10.4: Database Backup Strategy
+
 Set up regular backups and migration rollback plan.
 
 ---
@@ -838,6 +1697,7 @@ Set up regular backups and migration rollback plan.
 ## Reference: File Mapping
 
 ### React Components (examine/src → backend/resources/js)
+
 ```
 examine/src/pages/Home.tsx → backend/resources/js/Pages/Home.tsx
 examine/src/pages/Login.tsx → backend/resources/js/Pages/Login.tsx
@@ -853,6 +1713,7 @@ examine/src/components/ui/* → backend/resources/js/Components/ui/*
 ```
 
 ### Services Migration (Firebase → Laravel API)
+
 ```
 examine/src/services/auth.ts → Laravel AuthController + useAuth hook
 examine/src/services/database.ts → Laravel QuizController + AttemptController + useQuiz hook
@@ -861,6 +1722,7 @@ examine/database.js → Deprecated (Firebase Admin)
 ```
 
 ### Config Files
+
 ```
 examine/tailwind.config.js → backend/tailwind.config.js
 examine/postcss.config.js → backend/postcss.config.js
@@ -873,12 +1735,14 @@ examine/tsconfig.json → backend/tsconfig.json
 ## Reference: API Endpoints
 
 ### Authentication
+
 - `POST /api/register` - Register new user
 - `POST /api/login` - Login user
 - `POST /api/logout` - Logout user
 - `GET /api/user` - Get authenticated user
 
 ### Quizzes
+
 - `GET /api/quizzes` - List all quizzes
 - `GET /api/quizzes/{id}` - Get quiz details with questions
 - `POST /api/quizzes` - Create quiz (admin)
@@ -886,16 +1750,19 @@ examine/tsconfig.json → backend/tsconfig.json
 - `DELETE /api/quizzes/{id}` - Delete quiz (admin)
 
 ### Quiz Attempts
+
 - `POST /api/attempts` - Start new quiz attempt
 - `GET /api/attempts/{id}` - Get attempt details
 - `PUT /api/attempts/{id}` - Save answer to question
 - `POST /api/attempts/{id}/complete` - Complete quiz and calculate score
 
 ### Leaderboard
+
 - `GET /api/leaderboard` - Get global leaderboard
 - `GET /api/leaderboard/{quiz}` - Get quiz-specific leaderboard
 
 ### User Profile
+
 - `GET /api/profile` - Get user profile and stats
 - `PUT /api/profile` - Update user profile
 - `GET /api/profile/attempts` - Get user's quiz history
@@ -913,7 +1780,7 @@ examine/tsconfig.json → backend/tsconfig.json
 ✅ All validations work (client + server)  
 ✅ No Firebase dependencies remain  
 ✅ Responsive design preserved  
-✅ Loading states and error handling intact  
+✅ Loading states and error handling intact
 
 ---
 
@@ -922,25 +1789,30 @@ examine/tsconfig.json → backend/tsconfig.json
 ### Common Issues
 
 **Vite not building:**
+
 - Check `vite.config.js` syntax
 - Ensure React plugin installed
 - Clear `node_modules` and reinstall
 
 **Inertia not loading pages:**
+
 - Check middleware registered
 - Verify `app.tsx` setup
 - Check browser console for errors
 
 **CORS errors:**
+
 - Configure `config/cors.php`
 - Set `SANCTUM_STATEFUL_DOMAINS` in `.env`
 
 **Database connection failed:**
+
 - Verify MySQL running (XAMPP)
 - Check `.env` credentials
 - Ensure database exists
 
 **CSS not loading:**
+
 - Run `npm run dev`
 - Check Vite manifest
 - Verify `@vite` directives in blade
@@ -950,17 +1822,20 @@ examine/tsconfig.json → backend/tsconfig.json
 ## Next Steps After Migration
 
 1. **Performance Optimization**
+
    - Implement caching (Redis)
    - Optimize database queries
    - Add indexes
 
 2. **Additional Features**
+
    - Admin panel for quiz management
    - Real-time leaderboard (Laravel Echo + Pusher)
    - Email notifications
    - Social auth (OAuth)
 
 3. **Testing**
+
    - Write PHPUnit tests for API
    - Add React Testing Library tests
    - E2E tests with Cypress
