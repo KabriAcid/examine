@@ -13,12 +13,14 @@ class Dashboard extends Component
     public $stats = [];
     public $upcomingExams = [];
     public $recentResults = [];
+    public $isLoading = true;
 
     public function mount()
     {
         $this->loadStats();
         $this->loadUpcomingExams();
         $this->loadRecentResults();
+        $this->isLoading = false;
     }
 
     public function loadStats()

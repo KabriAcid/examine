@@ -5,8 +5,7 @@
 /* Ginto Font Family */
 @font-face {
     font-family: "Ginto";
-    src: url("/assets/font/Ginto-Copilot-Upright-Variable.woff2")
-        format("woff2");
+    src: url("../fonts/Ginto-Copilot-Upright-Variable.woff2") format("woff2");
     font-weight: 300 700;
     font-style: normal;
     font-display: swap;
