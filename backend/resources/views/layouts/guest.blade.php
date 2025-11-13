@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-inter antialiased">
+<body class="antialiased">
     <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
         {{ $slot }}
     </div>
