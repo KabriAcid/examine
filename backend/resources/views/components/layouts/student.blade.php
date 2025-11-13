@@ -13,6 +13,43 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- NProgress CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css" />
+
+    <!-- NProgress Custom Styling -->
+    <style>
+        #nprogress {
+            pointer-events: none;
+        }
+
+        #nprogress .bar {
+            background: linear-gradient(90deg, rgb(59, 130, 246), rgb(168, 85, 247));
+            height: 3px;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+        }
+
+        #nprogress .spinner {
+            display: none;
+        }
+
+        /* Skeleton Loader Pulse Animation */
+        @keyframes skeleton-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .skeleton-pulse {
+            animation: skeleton-pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 </head>
@@ -136,7 +173,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-h-screen {{ (isset($currentPage) && $currentPage === 'mock-exam') ? 'pb-0' : 'pb-20 lg:pb-0' }}"> <!-- Top Header Bar (Hidden on Mock Exam) -->
+        <div class="flex-1 flex flex-col min-h-screen lg:ml-72 {{ (isset($currentPage) && $currentPage === 'mock-exam') ? 'pb-0' : 'pb-20 lg:pb-0' }}"> <!-- Top Header Bar (Hidden on Mock Exam) -->
             @if((isset($currentPage) && $currentPage !== 'mock-exam') || !isset($currentPage))
             <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-spiritual-200 shadow-soft">
                 <div class="px-4 sm:px-6 lg:px-8 py-4">
