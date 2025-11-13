@@ -1,7 +1,7 @@
 <div>
     @if(!$isCompleted)
     <!-- Quiz In Progress -->
-    <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-8"
+    <div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 pt-20 lg:pt-8 pb-8"
         x-data="{
             timeRemaining: @entangle('timeRemaining'),
             timeWarning: false,

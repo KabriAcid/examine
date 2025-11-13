@@ -12,42 +12,32 @@
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 </head>
 
 <body class="antialiased bg-gradient-to-br from-primary-50 via-white to-secondary-50">
 
     <div x-data="{
-        sidebarOpen: true,
+        sidebarOpen: {{ (isset($currentPage) && $currentPage === 'mock-exam') ? 'false' : 'true' }},
         currentPage: '{{ $currentPage ?? 'dashboard' }}',
         userMenuOpen: false,
-        notificationOpen: false,
-        
-        navigate(page) {
-            this.currentPage = page;
-            // SPA-like navigation using Livewire
-            @this.call('navigateTo', page);
-        }
-    }" class="min-h-screen">
+        notificationOpen: false
+    }" class="min-h-screen flex flex-col lg:flex-row">
 
-        <!-- Sidebar -->
+        <!-- Sidebar (Desktop Only) -->
         <aside
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed top-0 left-0 z-40 w-72 h-screen transition-transform duration-300 ease-in-out bg-white/95 backdrop-blur-lg border-r border-spiritual-200 shadow-strong">
+            class="hidden lg:flex fixed lg:static top-0 left-0 z-40 w-72 h-screen flex-col transition-transform duration-300 ease-in-out bg-white/95 backdrop-blur-lg border-r border-spiritual-200 shadow-strong">
 
             <div class="h-full flex flex-col">
 
                 <!-- Logo & Brand -->
                 <div class="flex items-center justify-between px-6 py-5 border-b border-spiritual-200">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-medium">
-                            <span class="text-white font-bold text-xl">E</span>
-                        </div>
+                        <img src="{{ asset('favicon.png') }}" alt="Examine" class="w-10 h-10 rounded-xl">
                         <span class="text-xl font-bold text-spiritual-900">Examine</span>
                     </div>
-
-                    <button @click="sidebarOpen = false" class="lg:hidden text-spiritual-600 hover:text-primary-600 transition-colors">
-                        <x-lucide-x class="w-6 h-6" />
-                    </button>
                 </div>
 
                 <!-- User Profile Card -->
@@ -58,7 +48,6 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-spiritual-900 truncate">{{ auth()->user()->name }}</p>
-                            <p class="text-xs text-spiritual-600 truncate">{{ auth()->user()->email }}</p>
                         </div>
                     </div>
                 </div>
@@ -159,11 +148,8 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div
-            :class="sidebarOpen ? 'lg:ml-72' : 'ml-0'"
-            class="transition-all duration-300 ease-in-out">
-
-            <!-- Top Header Bar -->
+        <div class="flex-1 flex flex-col min-h-screen {{ (isset($currentPage) && $currentPage === 'mock-exam') ? 'pb-0' : 'pb-20 lg:pb-0' }}"> <!-- Top Header Bar (Hidden on Mock Exam) -->
+            @if((isset($currentPage) && $currentPage !== 'mock-exam') || !isset($currentPage))
             <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-spiritual-200 shadow-soft">
                 <div class="px-4 sm:px-6 lg:px-8 py-4">
                     <div class="flex items-center justify-between">
@@ -286,14 +272,16 @@
                     </div>
                 </div>
             </header>
+            @endif
 
             <!-- Page Content -->
-            <main class="p-4 sm:p-6 lg:p-8">
+            <main class="flex-1 {{ (isset($currentPage) && $currentPage === 'mock-exam') ? '' : 'p-4 sm:p-6 lg:p-8' }}">
                 {{ $slot }}
             </main>
 
-            <!-- Footer -->
-            <footer class="bg-white/50 border-t border-spiritual-200 mt-12">
+            <!-- Footer (Hidden on Mock Exam) -->
+            @if((isset($currentPage) && $currentPage !== 'mock-exam') || !isset($currentPage))
+            <footer class="hidden lg:block bg-white/50 border-t border-spiritual-200 mt-12">
                 <div class="px-4 sm:px-6 lg:px-8 py-6">
                     <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         <p class="text-sm text-spiritual-600">&copy; {{ date('Y') }} Examine CBT. All rights reserved.</p>
@@ -305,26 +293,68 @@
                     </div>
                 </div>
             </footer>
+            @endif
 
         </div>
 
-        <!-- Mobile Sidebar Overlay -->
-        <div
-            x-show="sidebarOpen"
-            @click="sidebarOpen = false"
-            x-transition:enter="transition-opacity ease-linear duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity ease-linear duration-300"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-30 bg-spiritual-900 bg-opacity-50 lg:hidden"
-            style="display: none;">
+        <!-- Mobile Bottom Navigation (SM & MD screens only, hidden on mock exam) -->
+        @if((isset($currentPage) && $currentPage !== 'mock-exam') || !isset($currentPage))
+        <nav class="fixed bottom-0 left-0 right-0 lg:hidden z-50 bg-white/95 backdrop-blur-md border-t border-spiritual-200 shadow-strong">
+            <div class="flex items-center justify-around h-20">
+                <!-- Dashboard -->
+                <a href="{{ route('student.dashboard') }}"
+                    wire:navigate
+                    class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('student.dashboard') ? 'text-primary-600' : 'text-spiritual-600' }} hover:text-primary-600 transition-colors">
+                    <x-lucide-layout-dashboard class="w-6 h-6" />
+                    <span class="text-xs font-medium">Dashboard</span>
+                </a>
+
+                <!-- Practice -->
+                <a href="{{ route('student.practice') }}"
+                    wire:navigate
+                    class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('student.practice') ? 'text-primary-600' : 'text-spiritual-600' }} hover:text-primary-600 transition-colors">
+                    <x-lucide-play class="w-6 h-6" />
+                    <span class="text-xs font-medium">Practice</span>
+                </a>
+
+                <!-- Results -->
+                <a href="{{ route('student.results') }}"
+                    wire:navigate
+                    class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('student.results') ? 'text-primary-600' : 'text-spiritual-600' }} hover:text-primary-600 transition-colors">
+                    <x-lucide-bar-chart-3 class="w-6 h-6" />
+                    <span class="text-xs font-medium">Results</span>
+                </a>
+
+                <!-- Profile -->
+                <a href="{{ route('student.settings') }}"
+                    wire:navigate
+                    class="flex flex-col items-center justify-center w-full h-full space-y-1 {{ request()->routeIs('student.settings') ? 'text-primary-600' : 'text-spiritual-600' }} hover:text-primary-600 transition-colors">
+                    <x-lucide-user class="w-6 h-6" />
+                    <span class="text-xs font-medium">Profile</span>
+                </a>
+            </div>
+        </nav>
+        @endif
+
+        <!-- Mobile Sidebar Overlay (removed since we're not using sliding sidebar anymore) -->
+        <!-- Exam-only quit button (Mock Exam mode) -->
+        @if(isset($currentPage) && $currentPage === 'mock-exam')
+        <div class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-spiritual-200 h-16 flex items-center justify-between px-4">
+            <div class="flex items-center space-x-3">
+                <img src="{{ asset('favicon.png') }}" alt="Examine" class="w-8 h-8 rounded-lg">
+                <span class="font-semibold text-spiritual-900">Examine</span>
+            </div>
+            <a href="{{ route('student.dashboard') }}"
+                wire:navigate
+                class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-error-50 text-error-600 hover:bg-error-100 transition-all duration-300 font-medium">
+                <x-lucide-x class="w-5 h-5" />
+                <span class="hidden sm:inline">Quit Exam</span>
+                <span class="sm:hidden">Quit</span>
+            </a>
         </div>
+        @endif
 
-    </div>
-
-    @livewireScripts
+        @livewireScripts
 </body>
 
 </html>

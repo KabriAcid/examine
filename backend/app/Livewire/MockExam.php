@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('components.layouts.app')]
+#[Layout('components.layouts.student')]
 class MockExam extends Component
 {
     // Quiz State
@@ -243,6 +243,10 @@ class MockExam extends Component
 
     public function render()
     {
-        return view('livewire.mock-exam');
+        return view('livewire.mock-exam', [
+            'pageTitle' => 'Practice Quiz',
+            'currentPage' => 'mock-exam',
+            'pageDescription' => $this->exam['title'] ?? 'Take a practice quiz'
+        ]);
     }
 }
