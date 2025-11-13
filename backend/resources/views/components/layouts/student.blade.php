@@ -26,9 +26,9 @@
         notificationOpen: false
     }" class="min-h-screen flex flex-col lg:flex-row">
 
-        <!-- Sidebar (Desktop Only) -->
+        <!-- Sidebar (Desktop Only - Fixed) -->
         <aside
-            class="hidden lg:flex fixed lg:static top-0 left-0 z-40 w-72 h-screen flex-col transition-transform duration-300 ease-in-out bg-white/95 backdrop-blur-lg border-r border-spiritual-200 shadow-strong">
+            class="hidden lg:flex fixed top-0 left-0 z-40 w-72 h-screen flex-col transition-transform duration-300 ease-in-out bg-white/95 backdrop-blur-lg border-r border-spiritual-200 shadow-strong">
 
             <div class="h-full flex flex-col">
 
@@ -37,18 +37,6 @@
                     <div class="flex items-center space-x-3">
                         <img src="{{ asset('favicon.png') }}" alt="Examine" class="w-10 h-10 rounded-xl">
                         <span class="text-xl font-bold text-spiritual-900">Examine</span>
-                    </div>
-                </div>
-
-                <!-- User Profile Card -->
-                <div class="px-6 py-4 border-b border-spiritual-200">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-medium">
-                            <span class="text-white font-semibold text-lg">{{ substr(auth()->user()->name, 0, 1) }}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-spiritual-900 truncate">{{ auth()->user()->name }}</p>
-                        </div>
                     </div>
                 </div>
 
