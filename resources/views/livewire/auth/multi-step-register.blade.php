@@ -1,4 +1,6 @@
-<div class="min-h-screen flex items-center justify-center p-3 sm:p-4">
+<div class="min-h-screen flex items-center justify-center p-3 sm:p-4"
+    x-data="{ step: @entangle('currentStep'), role: @entangle('accountType'), transitioning:false }"
+    x-on:step-changed.window="transitioning=true; setTimeout(()=>transitioning=false,300)">
     <div class="w-full max-w-4xl">
 
         <!-- Main Card -->
@@ -17,7 +19,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <button
                         wire:click="$set('accountType', 'student')"
-                        class="p-4 sm:p-6 border-2 rounded-xl sm:rounded-2xl transition-all duration-300 border-spiritual-200 hover:border-primary-300">
+                        @click="transitioning=true; setTimeout(()=>transitioning=false,300)"
+                        class="p-4 sm:p-6 border-2 rounded-xl sm:rounded-2xl transition-all duration-300 border-spiritual-200 hover:border-primary-300 focus:outline-none">
                         <x-lucide-user class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 text-primary-600" />
                         <h3 class="font-bold text-base sm:text-lg text-spiritual-900">Student</h3>
                         <p class="text-xs sm:text-sm text-spiritual-600 mt-1">Prepare for JAMB, WAEC & NECO</p>
@@ -25,7 +28,8 @@
 
                     <button
                         wire:click="$set('accountType', 'school_admin')"
-                        class="p-4 sm:p-6 border-2 rounded-xl sm:rounded-2xl transition-all duration-300 border-spiritual-200 hover:border-primary-300">
+                        @click="transitioning=true; setTimeout(()=>transitioning=false,300)"
+                        class="p-4 sm:p-6 border-2 rounded-xl sm:rounded-2xl transition-all duration-300 border-spiritual-200 hover:border-primary-300 focus:outline-none">
                         <x-lucide-school class="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 text-secondary-600" />
                         <h3 class="font-bold text-base sm:text-lg text-spiritual-900">School Admin</h3>
                         <p class="text-xs sm:text-sm text-spiritual-600 mt-1">Manage students & assessments</p>
@@ -36,7 +40,7 @@
 
             @if($accountType)
             <!-- Progress Indicator -->
-            <div class="mb-6 sm:mb-8">
+            <div class="mb-6 sm:mb-8" x-show="role" x-transition.opacity>
                 <!-- Desktop: Full Step Indicators -->
                 <div class="hidden lg:flex items-center justify-between">
                     @for($i = 1; $i <= $totalSteps; $i++)
@@ -68,7 +72,7 @@
         </div>
 
         <!-- Mobile: Single Step Display -->
-        <div class="lg:hidden">
+        <div class="lg:hidden" x-show="role" x-transition.opacity>
             <div class="flex flex-col items-center gap-2 mb-3">
                 <span class="text-lg font-bold text-primary-600">Step {{ $currentStep }} of {{ $totalSteps }}</span>
                 <span class="text-sm text-spiritual-600 font-medium">
@@ -92,7 +96,7 @@
         @if($accountType === 'student')
         <!-- Student Step 1: Account Info -->
         @if($currentStep === 1)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===1" x-transition.opacity.scale.duration.300ms>
             <div>
                 <div class="relative">
                     <x-lucide-user class="absolute left-3 top-3.5 w-5 h-5 text-spiritual-400" />
@@ -125,7 +129,7 @@
 
         <!-- Student Step 2: Security -->
         @if($currentStep === 2)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===2" x-transition.opacity.scale.duration.300ms>
             <div>
                 <div class="relative">
                     <x-lucide-lock class="absolute left-3 top-3.5 w-5 h-5 text-spiritual-400" />
@@ -159,7 +163,7 @@
 
         <!-- Student Step 3: Confirm -->
         @if($currentStep === 3)
-        <div class="space-y-4 sm:space-y-6 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-6" x-show="step===3" x-transition.opacity.scale.duration.300ms>
             <div class="bg-primary-50 border border-primary-200 rounded-xl p-4 sm:p-6">
                 <h3 class="font-bold text-base sm:text-lg text-spiritual-900 mb-3 sm:mb-4">📝 Review Your Information</h3>
                 <div class="space-y-2 text-sm sm:text-base">
@@ -185,7 +189,7 @@
         <!-- School Admin Forms -->
         <!-- Step 1: Admin Info -->
         @if($currentStep === 1)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===1" x-transition.opacity.scale.duration.300ms>
             <div class="bg-secondary-50 border border-secondary-200 rounded-xl p-3 sm:p-4 mb-4">
                 <p class="text-xs sm:text-sm text-spiritual-700">
                     <x-lucide-info class="w-4 h-4 inline mr-1" />
@@ -239,7 +243,7 @@
 
         <!-- Step 2: School Info -->
         @if($currentStep === 2)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===2" x-transition.opacity.scale.duration.300ms>
             <div>
                 <div class="relative">
                     <x-lucide-school class="absolute left-3 top-3.5 w-5 h-5 text-spiritual-400" />
@@ -317,7 +321,7 @@
 
         <!-- Step 3: Address & Capacity -->
         @if($currentStep === 3)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===3" x-transition.opacity.scale.duration.300ms>
             <div>
                 <div class="relative">
                     <x-lucide-map-pinned class="absolute left-3 top-3.5 w-5 h-5 text-spiritual-400" />
@@ -356,7 +360,7 @@
 
         <!-- Step 4: Security -->
         @if($currentStep === 4)
-        <div class="space-y-4 sm:space-y-5 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-5" x-show="step===4" x-transition.opacity.scale.duration.300ms>
             <div>
                 <div class="relative">
                     <x-lucide-lock class="absolute left-3 top-3.5 w-5 h-5 text-spiritual-400" />
@@ -390,7 +394,7 @@
 
         <!-- Step 5: Confirm & Payment Info -->
         @if($currentStep === 5)
-        <div class="space-y-4 sm:space-y-6 animate-fadeIn">
+        <div class="space-y-4 sm:space-y-6" x-show="step===5" x-transition.opacity.scale.duration.300ms>
             <div class="bg-primary-50 border border-primary-200 rounded-xl p-4 sm:p-6">
                 <h3 class="font-bold text-base sm:text-lg text-spiritual-900 mb-3 sm:mb-4">📋 Registration Summary</h3>
                 <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm">

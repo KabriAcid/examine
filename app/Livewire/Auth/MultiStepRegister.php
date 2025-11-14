@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\School;
 use App\Models\State;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -133,9 +134,15 @@ class MultiStepRegister extends Component
 
     public function mount()
     {
-        // accountType starts empty for selection
-        // Don't set it until user clicks
         $this->loadStates();
+
+        // Auto-select role from URL query if provided (?role=student or ?role=school_admin)
+        $roleParam = request()->query('role');
+        if (in_array($roleParam, ['student', 'school_admin'])) {
+            $this->accountType = $roleParam;
+            $this->currentStep = 1; // Start at first step immediately
+            $this->updateTotalSteps();
+        }
     }
 
     protected function loadStates()
@@ -195,7 +202,7 @@ class MultiStepRegister extends Component
                 'role' => 'student',
             ]);
 
-            auth()->login($user);
+            Auth::login($user);
         });
 
         return redirect()->route('student.dashboard');
