@@ -106,7 +106,7 @@
                                 <x-lucide-arrow-right class="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                             </a>
                             @else
-                            <a href="{{ route('register') }}" wire:navigate class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-4 sm:py-3 px-6 sm:px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed group text-sm sm:text-base w-full sm:w-auto">
+                            <a href="{{ route('register') }}?role=student" class="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium py-4 sm:py-3 px-6 sm:px-6 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:cursor-not-allowed group text-sm sm:text-base w-full sm:w-auto">
                                 <x-lucide-play class="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                                 Start Learning
                                 <x-lucide-arrow-right class="w-4 h-4 sm:w-5 sm:h-5 ml-2 group-hover:translate-x-1 transition-transform" />
